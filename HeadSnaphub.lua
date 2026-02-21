@@ -314,8 +314,8 @@ local function GetClosestTarget()
                     -- KIỂM TRA FOV
                     if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
                         
-                        -- 🔥 THÊM WALL CHECK Ở ĐÂY 🔥
-                        local wallCheck = true
+                        -- 🔥 WALL CHECK - LUÔN BẬT, KHÔNG CÓ NÚT 🔥
+                        local canAim = true
                         local rayParams = RaycastParams.new()
                         rayParams.FilterType = Enum.RaycastFilterType.Blacklist
                         rayParams.FilterDescendantsInstances = {player.Character, plr.Character}
@@ -326,20 +326,16 @@ local function GetClosestTarget()
                             rayParams
                         )
                         
-                        -- Nếu không có raycast hoặc raycast trúng địch => không có tường
+                        -- Nếu có raycast và không trúng địch => có tường
                         if rayResult then
                             local hitPart = rayResult.Instance
-                            if hitPart and hitPart:IsDescendantOf(plr.Character) then
-                                wallCheck = true -- Trúng địch, không tường
-                            else
-                                wallCheck = false -- Trúng tường
+                            if hitPart and not hitPart:IsDescendantOf(plr.Character) then
+                                canAim = false -- Có tường, không aim
                             end
-                        else
-                            wallCheck = true -- Không trúng gì, chắc chắn không tường
                         end
                         
-                        -- CHỈ AIM NẾU WALLCHECK = TRUE
-                        if wallCheck then
+                        -- CHỈ AIM NẾU CAN AIM = TRUE
+                        if canAim then
                             shortest, closest = dist, head
                         end
                     end
