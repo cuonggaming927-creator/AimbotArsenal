@@ -402,59 +402,51 @@ end)
 -- Thay thế toàn bộ phần ESP (từ dòng "--================ ESP =================" trở đi) bằng code này:
 
 --================ ESP FIX (DÙNG BILLBOARD GUI) =================
-local ESP_Boxes = {} -- Lưu các GUI cho mỗi player
+local ESP_Boxes = {}
 
--- Hàm tạo ESP Box bằng GUI
 local function CreateESP_Player(plr)
     if plr == player then return end
-    
-    -- Tạo BillboardGui
+
     local Billboard = Instance.new("BillboardGui")
     Billboard.Name = "ESP_"..plr.Name
     Billboard.AlwaysOnTop = true
     Billboard.LightInfluence = 0
-    Billboard.Size = UDim2.new(0, 50, 0, 100) -- Kích thước sẽ được điều chỉnh sau
+    Billboard.Size = UDim2.new(0, 50, 0, 100)
     Billboard.StudsOffset = Vector3.new(0, 2, 0)
     Billboard.Adornee = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") or nil
-    
-    -- Tạo Frame chính (vẽ box)
+
     local Box = Instance.new("Frame", Billboard)
     Box.Name = "Box"
     Box.BackgroundColor3 = ESP_COLOR
-    Box.BackgroundTransparency = 1 -- Trong suốt để chỉ thấy viền
+    Box.BackgroundTransparency = 1
     Box.BorderSizePixel = 0
     Box.Size = UDim2.new(1, 0, 1, 0)
-    
-    -- Tạo viền (UIStroke)
+
     local Stroke = Instance.new("UIStroke", Box)
     Stroke.Color = ESP_COLOR
     Stroke.Thickness = ESP_THICKNESS
     Stroke.Transparency = 0
-    
-    -- Tạo góc bo tròn (tùy chọn)
+
     local Corner = Instance.new("UICorner", Box)
     Corner.CornerRadius = UDim.new(0, 4)
-    
-    -- Kết nối với nhân vật (phòng khi nhân vật thay đổi)
+
     local function onCharacterAdded(char)
-        task.wait(0.1) -- Chờ để load
+        task.wait(0.1)
         local hrp = char:FindFirstChild("HumanoidRootPart")
         if hrp then
             Billboard.Adornee = hrp
         end
     end
-    
+
     if plr.Character then
         onCharacterAdded(plr.Character)
     end
     plr.CharacterAdded:Connect(onCharacterAdded)
-    
-    -- Lưu lại
+
     ESP_Boxes[plr] = Billboard
-    Billboard.Parent = game:GetService("CoreGui") -- Hoặc player.PlayerGui tùy executer
+    Billboard.Parent = game:GetService("CoreGui")
 end
 
--- Xóa ESP khi player rời
 local function RemoveESP_Player(plr)
     local billboard = ESP_Boxes[plr]
     if billboard then
@@ -468,7 +460,7 @@ for _, plr in ipairs(Players:GetPlayers()) do
     if plr ~= player then
         CreateESP_Player(plr)
     end
-end  -- <<< CÓ 1 end Ở ĐÂY (dòng này có sẵn chưa?)
+end
 
 -- Kết nối sự kiện
 Players.PlayerAdded:Connect(CreateESP_Player)
@@ -477,7 +469,6 @@ Players.PlayerRemoving:Connect(RemoveESP_Player)
 -- Update kích thước box dựa trên khoảng cách
 RunService.RenderStepped:Connect(function()
     if not ESP_ENABLED then
-        -- Ẩn tất cả nếu tắt ESP
         for _, billboard in pairs(ESP_Boxes) do
             if billboard then
                 local box = billboard:FindFirstChild("Box")
@@ -491,21 +482,18 @@ RunService.RenderStepped:Connect(function()
         end
         return
     end
-    
+
     for plr, billboard in pairs(ESP_Boxes) do
         if billboard and plr.Character then
             local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
             local hum = plr.Character:FindFirstChild("Humanoid")
-            
+
             if hrp and hum and hum.Health > 0 then
-                -- Tính khoảng cách để điều chỉnh kích thước
                 local dist = (Camera.CFrame.Position - hrp.Position).Magnitude
                 local sizeMultiplier = math.clamp(2000 / dist, 0.5, 3)
-                
-                -- Điều chỉnh kích thước Billboard
+
                 billboard.Size = UDim2.new(0, 40 * sizeMultiplier, 0, 80 * sizeMultiplier)
-                
-                -- Hiện box
+
                 local box = billboard:FindFirstChild("Box")
                 if box then
                     local stroke = box:FindFirstChildOfClass("UIStroke")
@@ -520,14 +508,13 @@ RunService.RenderStepped:Connect(function()
             end
         end
     end
-end)  -- <<< end của RunService.RenderStepped (dòng này có sẵn chưa?)
+end)
 
 -- Thêm chức năng bật/tắt màu sắc (tùy chọn)
 EspBtn.MouseButton1Click:Connect(function()
     ESP_ENABLED = not ESP_ENABLED
     EspBtn.Text = ESP_ENABLED and "ESP : ON" or "ESP : OFF"
-    
-    -- Cập nhật trạng thái hiển thị
+
     for _, billboard in pairs(ESP_Boxes) do
         if billboard then
             local box = billboard:FindFirstChild("Box")
@@ -539,33 +526,29 @@ EspBtn.MouseButton1Click:Connect(function()
             end
         end
     end
-end)  -- <<< end của EspBtn.MouseButton1Click (dòng này có sẵn chưa?)
+end)
 
 --================ FOV UPDATE (GUI) =================
 RunService.RenderStepped:Connect(function()
     if not Camera then return end
-    
-    -- Cập nhật vị trí và kích thước (không set visibility ở đây nữa)
+
     FOVFrame.Position = UDim2.new(
         0.5, 0,
         0.5, -35
     )
-    
-    FOVFrame.Size = UDim2.fromOffset(FOV_RADIUS*2, FOV_RADIUS*2)
-    
-    -- KHÔNG set FOVFrame.Visible ở đây nữa, để nó giữ nguyên trạng thái từ nút bấm
-    -- FOVFrame.Visible = FOV_ENABLED  <-- XÓA DÒNG NÀY
-end)
---================ FOV +/- LOGIC =================
 
+    FOVFrame.Size = UDim2.fromOffset(FOV_RADIUS*2, FOV_RADIUS*2)
+end)
+
+--================ FOV +/- LOGIC =================
 local FOV_MIN = 50
 local FOV_MAX = 600
 local FOV_STEP = 25
 
 FovPlus.MouseButton1Click:Connect(function()
-	FOV_RADIUS = math.clamp(FOV_RADIUS + FOV_STEP, FOV_MIN, FOV_MAX)
+    FOV_RADIUS = math.clamp(FOV_RADIUS + FOV_STEP, FOV_MIN, FOV_MAX)
 end)
 
 FovMinus.MouseButton1Click:Connect(function()
-	FOV_RADIUS = math.clamp(FOV_RADIUS - FOV_STEP, FOV_MIN, FOV_MAX)
+    FOV_RADIUS = math.clamp(FOV_RADIUS - FOV_STEP, FOV_MIN, FOV_MAX)
 end)
