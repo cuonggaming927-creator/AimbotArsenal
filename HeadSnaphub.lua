@@ -500,22 +500,19 @@ end)
 --================ FOV UPDATE (GUI) =================
 
 RunService.RenderStepped:Connect(function()
-	if not Camera then return end
+    if not Camera then return end
 
-	FOVFrame.Visible = FOV_ENABLED
-	FOVFrame.Size = UDim2.fromOffset(FOV_RADIUS*2, FOV_RADIUS*2)
-	FOVFrame.Position = UDim2.fromOffset(
-		Camera.ViewportSize.X / 2,
-		Camera.ViewportSize.Y / 2
-	)
-end)
-
-FovBtn.MouseButton1Click:Connect(function()
-
-	FOV_ENABLED = not FOV_ENABLED
-
-	FovBtn.Text = FOV_ENABLED and "FOV : ON" or "FOV : OFF"
-
+    -- Lấy kích thước màn hình thực tế
+    local screenSize = Camera.ViewportSize
+    
+    -- Set position với offset + thêm tùy chỉnh
+    FOVFrame.Position = UDim2.new(
+        0.5, 0,  -- X = 50% màn hình
+        0.5, -35 -- Y = 50% màn hình - 35px (kéo lên trên 35 pixel)
+    )
+    
+    FOVFrame.Size = UDim2.fromOffset(FOV_RADIUS*2, FOV_RADIUS*2)
+    FOVFrame.Visible = FOV_ENABLED
 end)
 --================ FOV +/- LOGIC =================
 
