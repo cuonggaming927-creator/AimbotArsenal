@@ -381,7 +381,8 @@ end
 -- CHỈ AIM NẾU CAN AIM = TRUE
 if canAim then
     shortest, closest = dist, head
-end
+						end
+					end
 -- AIMBOT LOOP
 RunService.RenderStepped:Connect(function()
     if aimbot and FOV_ENABLED then
@@ -467,7 +468,7 @@ for _, plr in ipairs(Players:GetPlayers()) do
     if plr ~= player then
         CreateESP_Player(plr)
     end
-end
+end  -- <<< CÓ 1 end Ở ĐÂY (dòng này có sẵn chưa?)
 
 -- Kết nối sự kiện
 Players.PlayerAdded:Connect(CreateESP_Player)
@@ -519,7 +520,7 @@ RunService.RenderStepped:Connect(function()
             end
         end
     end
-end)
+end)  -- <<< end của RunService.RenderStepped (dòng này có sẵn chưa?)
 
 -- Thêm chức năng bật/tắt màu sắc (tùy chọn)
 EspBtn.MouseButton1Click:Connect(function()
@@ -538,7 +539,8 @@ EspBtn.MouseButton1Click:Connect(function()
             end
         end
     end
-end)
+end)  -- <<< end của EspBtn.MouseButton1Click (dòng này có sẵn chưa?)
+
 --================ FOV UPDATE (GUI) =================
 RunService.RenderStepped:Connect(function()
     if not Camera then return end
