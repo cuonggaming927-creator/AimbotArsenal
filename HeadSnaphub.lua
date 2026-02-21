@@ -210,59 +210,66 @@ local function GetClosestTarget()
                     local dist = (Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2) 
                         - Vector2.new(pos.X, pos.Y)).Magnitude
                     
-                   if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
-    local canAim = true
-    
-    if WALLCHECK_ENABLED then
-        -- Filter chỉ mình và địch
-        local filterList = {player.Character, plr.Character}
-        local startPos = Camera.CFrame.Position + Camera.CFrame.LookVector * 2
-        local direction = (head.Position - startPos).Unit * 1000
-        
-        local rayParams = RaycastParams.new()
-        rayParams.FilterType = Enum.RaycastFilterType.Blacklist
-        rayParams.FilterDescendantsInstances = filterList
-        
-        local rayResult = workspace:Raycast(startPos, direction, rayParams)
-        
-        if rayResult then
-            local hitPart = rayResult.Instance
-            local hitPos = rayResult.Position
-            local distToEnemy = (head.Position - startPos).Magnitude
-            local distToWall = (hitPos - startPos).Magnitude
-            
-            -- Danh sách material tường thật
-            local solidMaterials = {
-                [Enum.Material.Concrete] = true,
-                [Enum.Material.Brick] = true,
-                [Enum.Material.Rock] = true,
-                [Enum.Material.Granite] = true,
-                [Enum.Material.Marble] = true,
-                [Enum.Material.Slate] = true,
-                [Enum.Material.WoodPlanks] = true,
-                [Enum.Material.Metal] = true,
-                [Enum.Material.Cobblestone] = true,
-                [Enum.Material.Pavement] = true,
-                [Enum.Material.Sandstone] = true,
-                [Enum.Material.Limestone] = true,
-                [Enum.Material.Basalt] = true,
-                [Enum.Material.CorrodedMetal] = true,
-                [Enum.Material.DiamondPlate] = true,
-                [Enum.Material.Plaster] = true,
-                [Enum.Material.CeramicTiles] = true,
-                [Enum.Material.RoofShingles] = true,
-                [Enum.Material.Wood] = true,
-            }
-            
-            if solidMaterials[hitPart.Material] and distToWall < distToEnemy then
-                canAim = false
+                    if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
+                        local canAim = true
+                        
+                        if WALLCHECK_ENABLED then
+                            -- Filter chỉ mình và địch
+                            local filterList = {player.Character, plr.Character}
+                            local startPos = Camera.CFrame.Position + Camera.CFrame.LookVector * 2
+                            local direction = (head.Position - startPos).Unit * 1000
+                            
+                            local rayParams = RaycastParams.new()
+                            rayParams.FilterType = Enum.RaycastFilterType.Blacklist
+                            rayParams.FilterDescendantsInstances = filterList
+                            
+                            local rayResult = workspace:Raycast(startPos, direction, rayParams)
+                            
+                            if rayResult then
+                                local hitPart = rayResult.Instance
+                                local hitPos = rayResult.Position
+                                local distToEnemy = (head.Position - startPos).Magnitude
+                                local distToWall = (hitPos - startPos).Magnitude
+                                
+                                -- Danh sách material tường thật
+                                local solidMaterials = {
+                                    [Enum.Material.Concrete] = true,
+                                    [Enum.Material.Brick] = true,
+                                    [Enum.Material.Rock] = true,
+                                    [Enum.Material.Granite] = true,
+                                    [Enum.Material.Marble] = true,
+                                    [Enum.Material.Slate] = true,
+                                    [Enum.Material.WoodPlanks] = true,
+                                    [Enum.Material.Metal] = true,
+                                    [Enum.Material.Cobblestone] = true,
+                                    [Enum.Material.Pavement] = true,
+                                    [Enum.Material.Sandstone] = true,
+                                    [Enum.Material.Limestone] = true,
+                                    [Enum.Material.Basalt] = true,
+                                    [Enum.Material.CorrodedMetal] = true,
+                                    [Enum.Material.DiamondPlate] = true,
+                                    [Enum.Material.Plaster] = true,
+                                    [Enum.Material.CeramicTiles] = true,
+                                    [Enum.Material.RoofShingles] = true,
+                                    [Enum.Material.Wood] = true,
+                                }
+                                
+                                if solidMaterials[hitPart.Material] and distToWall < distToEnemy then
+                                    canAim = false
+                                end
+                            end
+                        end
+                        
+                        if canAim then
+                            shortest, closest = dist, head
+                        end
+                    end  -- <<< END QUAN TRỌNG
+                end
             end
         end
     end
     
-    if canAim then
-        shortest, closest = dist, head
-    end
+    return closest
 end
 
 RunService.RenderStepped:Connect(function()
