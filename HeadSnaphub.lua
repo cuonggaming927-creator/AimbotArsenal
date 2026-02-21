@@ -177,6 +177,17 @@ FovBtn.MouseButton1Click:Connect(function()
     FovBtn.Text = FOV_ENABLED and "FOV : ON" or "FOV : OFF"
     FOVFrame.Visible = FOV_ENABLED  -- Set trực tiếp
 end)
+-- Biến Wall Check (mặc định ON để an toàn)
+local WALLCHECK_ENABLED = true
+
+-- Nút Wall Check (đặt ở vị trí y = 166 + 52 = 218)
+local WallCheckBtn = MakeButton("Wall Check : ON", 218)
+
+-- Xử lý bấm nút
+WallCheckBtn.MouseButton1Click:Connect(function()
+    WALLCHECK_ENABLED = not WALLCHECK_ENABLED
+    WallCheckBtn.Text = WALLCHECK_ENABLED and "Wall Check : ON" or "Wall Check : OFF"
+end)
 --================ FOV +/- BUTTON =================
 
 local FovPlus = Instance.new("TextButton", Content)
@@ -314,91 +325,93 @@ local function GetClosestTarget()
                     
                     if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
                         
-                        -- 🔥 WALL CHECK SIÊU CẤP 🔥
+                                               -- WALL CHECK (CÓ THỂ BẬT/TẮT)
                         local canAim = true
                         
-                        local function IsRealWall(part)
-                            if not part then return false end
-                            if part == workspace.Terrain then return true end
-                            
-                            local solidMaterials = {
-                                [Enum.Material.Concrete] = true,
-                                [Enum.Material.Brick] = true,
-                                [Enum.Material.Stone] = true,
-                                [Enum.Material.Granite] = true,
-                                [Enum.Material.Marble] = true,
-                                [Enum.Material.Slate] = true,
-                                [Enum.Material.WoodPlanks] = true,
-                                [Enum.Material.Metal] = true,
-                                [Enum.Material.Cobblestone] = true,
-                                [Enum.Material.Pavement] = true,
-                                [Enum.Material.Sandstone] = true,
-                                [Enum.Material.Limestone] = true,
-                                [Enum.Material.Rock] = true,
-                                [Enum.Material.Basalt] = true,
-                                [Enum.Material.CorrodedMetal] = true,
-                                [Enum.Material.DiamondPlate] = true,
-                                [Enum.Material.Plaster] = true,
-                                [Enum.Material.CeramicTiles] = true,
-                                [Enum.Material.RoofShingles] = true,
-                                [Enum.Material.Wood] = true,
-                            }
-                            
-                            if solidMaterials[part.Material] then return true end
-                            
-                            if part:IsA("MeshPart") then
-                                local size = part.Size
-                                local thickness = math.min(size.X, size.Y, size.Z)
-                                if thickness > 1 then return true end
+                        if WALLCHECK_ENABLED then
+                            local function IsRealWall(part)
+                                if not part then return false end
+                                if part == workspace.Terrain then return true end
+                                
+                                local solidMaterials = {
+                                    [Enum.Material.Concrete] = true,
+                                    [Enum.Material.Brick] = true,
+                                    [Enum.Material.Stone] = true,
+                                    [Enum.Material.Granite] = true,
+                                    [Enum.Material.Marble] = true,
+                                    [Enum.Material.Slate] = true,
+                                    [Enum.Material.WoodPlanks] = true,
+                                    [Enum.Material.Metal] = true,
+                                    [Enum.Material.Cobblestone] = true,
+                                    [Enum.Material.Pavement] = true,
+                                    [Enum.Material.Sandstone] = true,
+                                    [Enum.Material.Limestone] = true,
+                                    [Enum.Material.Rock] = true,
+                                    [Enum.Material.Basalt] = true,
+                                    [Enum.Material.CorrodedMetal] = true,
+                                    [Enum.Material.DiamondPlate] = true,
+                                    [Enum.Material.Plaster] = true,
+                                    [Enum.Material.CeramicTiles] = true,
+                                    [Enum.Material.RoofShingles] = true,
+                                    [Enum.Material.Wood] = true,
+                                }
+                                
+                                if solidMaterials[part.Material] then return true end
+                                
+                                if part:IsA("MeshPart") then
+                                    local size = part.Size
+                                    local thickness = math.min(size.X, size.Y, size.Z)
+                                    if thickness > 1 then return true end
+                                end
+                                
+                                if part:IsA("UnionOperation") then return true end
+                                
+                                if part:IsA("Part") then
+                                    local size = part.Size
+                                    local thickness = math.min(size.X, size.Y, size.Z)
+                                    if thickness > 2 then return true end
+                                    if thickness > 0.5 and part.Transparency < 0.5 then return true end
+                                end
+                                
+                                return false
                             end
                             
-                            if part:IsA("UnionOperation") then return true end
-                            
-                            if part:IsA("Part") then
-                                local size = part.Size
-                                local thickness = math.min(size.X, size.Y, size.Z)
-                                if thickness > 2 then return true end
-                                if thickness > 0.5 and part.Transparency < 0.5 then return true end
+                            local allCharacters = {player.Character}
+                            for _, p in ipairs(Players:GetPlayers()) do
+                                if p.Character and p ~= player then
+                                    table.insert(allCharacters, p.Character)
+                                end
                             end
                             
-                            return false
-                        end
-                        
-                        local allCharacters = {player.Character}
-                        for _, p in ipairs(Players:GetPlayers()) do
-                            if p.Character and p ~= player then
-                                table.insert(allCharacters, p.Character)
+                            local startPos = Camera.CFrame.Position + Camera.CFrame.LookVector * 2
+                            local direction = (head.Position - startPos).Unit * 1000
+                            
+                            local rayParams = RaycastParams.new()
+                            rayParams.FilterType = Enum.RaycastFilterType.Blacklist
+                            rayParams.FilterDescendantsInstances = allCharacters
+                            
+                            local rayResult = workspace:Raycast(startPos, direction, rayParams)
+                            
+                            if rayResult then
+                                local hitPart = rayResult.Instance
+                                if IsRealWall(hitPart) then
+                                    canAim = false
+                                end
                             end
-                        end
+                        end -- ĐÓNG if WALLCHECK_ENABLED
                         
-                        local startPos = Camera.CFrame.Position + Camera.CFrame.LookVector * 2
-                        local direction = (head.Position - startPos).Unit * 1000
-                        
-                        local rayParams = RaycastParams.new()
-                        rayParams.FilterType = Enum.RaycastFilterType.Blacklist
-                        rayParams.FilterDescendantsInstances = allCharacters
-                        
-                        local rayResult = workspace:Raycast(startPos, direction, rayParams)
-                        
-                        if rayResult then
-                            local hitPart = rayResult.Instance
-                            if IsRealWall(hitPart) then
-                                canAim = false
-                            end
-                        end
-                        
+                        -- CHỈ AIM NẾU CAN AIM = TRUE
                         if canAim then
                             shortest, closest = dist, head
                         end
-                    end
-                end
-            end
-        end
-    end
+                    end -- ĐÓNG if FOV_ENABLED and dist <= FOV_RADIUS
+                end -- ĐÓNG if onscreen
+            end -- ĐÓNG if hum and head
+        end -- ĐÓNG if plr ~= player
+    end -- ĐÓNG for loop
     
     return closest
-end
-
+end -- ĐÓNG hàm GetClosestTarget
 -- AIMBOT LOOP
 RunService.RenderStepped:Connect(function()
     if aimbot and FOV_ENABLED then
