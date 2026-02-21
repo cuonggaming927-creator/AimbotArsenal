@@ -1,55 +1,34 @@
 --========================================
-
 -- AIMBOT ARSENAL UI (ROUNDED)
-
 -- DRAG + COLLAPSE
-
 -- AIMBOT + ESP + GUI FOV
-
 -- WORK 100% (NO DRAWING CIRCLE)
-
 --========================================
 
 local Players = game:GetService("Players")
-
 local UserInputService = game:GetService("UserInputService")
-
 local TweenService = game:GetService("TweenService")
-
 local RunService = game:GetService("RunService")
-
 local player = Players.LocalPlayer
-
 local Camera = workspace.CurrentCamera
 
 --================ SETTINGS =================
-
 local ESP_ENABLED = true
-
 local ESP_COLOR = Color3.fromRGB(0,255,0)
-
 local ESP_THICKNESS = 1.5
-
 local FOV_ENABLED = true
-
-local FOV_RADIUS = 300 -- pixel
-
+local FOV_RADIUS = 300
 local FOV_COLOR = Color3.fromRGB(255,0,0)
-
---================ STORAGE =================
-
 local Boxes = {}
+local WALLCHECK_ENABLED = true
+local aimbot = false
 
 --================ UI ROOT =================
-
 local ScreenGui = Instance.new("ScreenGui")
-
 ScreenGui.ResetOnSpawn = false
-
 ScreenGui.Parent = player:WaitForChild("PlayerGui")
 
---================ FOV GUI (FIX 100%) =================
-
+--================ FOV GUI =================
 local FOVFrame = Instance.new("Frame", ScreenGui)
 FOVFrame.Size = UDim2.fromOffset(FOV_RADIUS*2, FOV_RADIUS*2)
 FOVFrame.BackgroundTransparency = 1
@@ -63,133 +42,83 @@ FOVStroke.Thickness = 2
 
 local FOVCorner = Instance.new("UICorner", FOVFrame)
 FOVCorner.CornerRadius = UDim.new(1, 0)
+
 --================ MAIN UI =================
-
 local MainFrame = Instance.new("Frame", ScreenGui)
-
 MainFrame.Size = UDim2.new(0,260,0,330)
-
 MainFrame.Position = UDim2.new(0.5,-130,0.5,-165)
-
 MainFrame.BackgroundColor3 = Color3.fromRGB(20,20,20)
-
 MainFrame.BorderSizePixel = 0
-
 MainFrame.Active = true
-
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,12)
-
 Instance.new("UIStroke", MainFrame).Color = Color3.fromRGB(60,60,60)
 
 local Header = Instance.new("Frame", MainFrame)
-
 Header.Size = UDim2.new(1,0,0,42)
-
 Header.BackgroundColor3 = Color3.fromRGB(30,30,30)
-
 Header.BorderSizePixel = 0
-
 Header.Active = true
-
 Instance.new("UICorner", Header).CornerRadius = UDim.new(0,12)
-
 Header.Active = true
-
 Header.Selectable = true
 
 local Title = Instance.new("TextLabel", Header)
-
 Title.Size = UDim2.new(1,-50,1,0)
-
 Title.Position = UDim2.new(0,12,0,0)
-
 Title.BackgroundTransparency = 1
-
 Title.Text = "Aimbot Arsenal"
-
 Title.TextColor3 = Color3.new(1,1,1)
-
 Title.Font = Enum.Font.SourceSansBold
-
 Title.TextSize = 18
-
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
 local CollapseBtn = Instance.new("TextButton", Header)
-
 CollapseBtn.Size = UDim2.new(0,40,1,0)
-
 CollapseBtn.Position = UDim2.new(1,-42,0,0)
-
 CollapseBtn.BackgroundTransparency = 1
-
 CollapseBtn.Text = "−"
-
 CollapseBtn.TextColor3 = Color3.new(1,1,1)
-
 CollapseBtn.Font = Enum.Font.SourceSansBold
-
 CollapseBtn.TextSize = 22
 
 local Content = Instance.new("Frame", MainFrame)
-
 Content.Size = UDim2.new(1,0,1,-42)
-
 Content.Position = UDim2.new(0,0,0,42)
-
 Content.BackgroundColor3 = Color3.fromRGB(15,15,15)
-
 Content.BorderSizePixel = 0
-
 Instance.new("UICorner", Content).CornerRadius = UDim.new(0,12)
 
 local function MakeButton(text, y)
-
-	local b = Instance.new("TextButton", Content)	b.Size = UDim2.new(1,-20,0,42)
-
-	b.Position = UDim2.new(0,10,0,y)
-
-	b.BackgroundColor3 = Color3.fromRGB(45,45,45)
-
-	b.BorderSizePixel = 0
-
-	b.Text = text
-
-	b.TextColor3 = Color3.new(1,1,1)
-
-	b.Font = Enum.Font.SourceSansBold
-
-	b.TextSize = 16
-
-	Instance.new("UICorner", b).CornerRadius = UDim.new(0,8)
-
-	return b
-
+    local b = Instance.new("TextButton", Content)
+    b.Size = UDim2.new(1,-20,0,42)
+    b.Position = UDim2.new(0,10,0,y)
+    b.BackgroundColor3 = Color3.fromRGB(45,45,45)
+    b.BorderSizePixel = 0
+    b.Text = text
+    b.TextColor3 = Color3.new(1,1,1)
+    b.Font = Enum.Font.SourceSansBold
+    b.TextSize = 16
+    Instance.new("UICorner", b).CornerRadius = UDim.new(0,8)
+    return b
 end
 
 local AimBtn = MakeButton("Aimbot : OFF", 10)
-
 local EspBtn = MakeButton("ESP : ON", 62)
-
 local FovBtn = MakeButton("FOV : ON", 114)
+
 FovBtn.MouseButton1Click:Connect(function()
     FOV_ENABLED = not FOV_ENABLED
     FovBtn.Text = FOV_ENABLED and "FOV : ON" or "FOV : OFF"
-    FOVFrame.Visible = FOV_ENABLED  -- Set trực tiếp
+    FOVFrame.Visible = FOV_ENABLED
 end)
--- Biến Wall Check (mặc định ON để an toàn)
-local WALLCHECK_ENABLED = true
 
--- Nút Wall Check (đặt ở vị trí y = 166 + 52 = 218)
 local WallCheckBtn = MakeButton("Wall Check : ON", 218)
-
--- Xử lý bấm nút
 WallCheckBtn.MouseButton1Click:Connect(function()
     WALLCHECK_ENABLED = not WALLCHECK_ENABLED
     WallCheckBtn.Text = WALLCHECK_ENABLED and "Wall Check : ON" or "Wall Check : OFF"
 end)
---================ FOV +/- BUTTON =================
 
+--================ FOV +/- BUTTON =================
 local FovPlus = Instance.new("TextButton", Content)
 FovPlus.Size = UDim2.new(0.5,-15,0,36)
 FovPlus.Position = UDim2.new(0,10,0,166)
@@ -209,105 +138,62 @@ FovMinus.TextColor3 = Color3.new(1,1,1)
 FovMinus.Font = Enum.Font.SourceSansBold
 FovMinus.TextSize = 22
 Instance.new("UICorner", FovMinus).CornerRadius = UDim.new(0,8)
---================ DRAG FIX (WORK 100%) =================
 
+--================ DRAG FIX =================
 local dragging = false
-
 local dragInput
-
 local dragStart
-
 local startPos
 
 local function update(input)
-
-	local delta = input.Position - dragStart
-
-	MainFrame.Position = UDim2.new(
-
-		startPos.X.Scale,
-
-		startPos.X.Offset + delta.X,
-
-		startPos.Y.Scale,
-
-		startPos.Y.Offset + delta.Y
-
-	)
-
+    local delta = input.Position - dragStart
+    MainFrame.Position = UDim2.new(
+        startPos.X.Scale,
+        startPos.X.Offset + delta.X,
+        startPos.Y.Scale,
+        startPos.Y.Offset + delta.Y
+    )
 end
 
 Header.InputBegan:Connect(function(input)
-
-	if input.UserInputType == Enum.UserInputType.MouseButton1
-
-	or input.UserInputType == Enum.UserInputType.Touch then
-
-		dragging = true
-
-		dragStart = input.Position
-
-		startPos = MainFrame.Position
-
-		input.Changed:Connect(function()
-
-			if input.UserInputState == Enum.UserInputState.End then
-
-				dragging = false
-
-			end
-
-		end)
-
-	end
-
+    if input.UserInputType == Enum.UserInputType.MouseButton1
+    or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = MainFrame.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
 end)
 
 Header.InputChanged:Connect(function(input)
-
-	if input.UserInputType == Enum.UserInputType.MouseMovement
-
-	or input.UserInputType == Enum.UserInputType.Touch then
-
-		dragInput = input
-
-	end
-
+    if input.UserInputType == Enum.UserInputType.MouseMovement
+    or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-
-	if input == dragInput and dragging then
-
-		update(input)
-
-	end
-
+    if input == dragInput and dragging then
+        update(input)
+    end
 end)
 
 --================ COLLAPSE =================
-
 local collapsed = false
-
 CollapseBtn.MouseButton1Click:Connect(function()
-
-	collapsed = not collapsed
-
-	Content.Visible = not collapsed
-
-	CollapseBtn.Text = collapsed and "+" or "−"
-
-	TweenService:Create(MainFrame, TweenInfo.new(0.25), {
-
-		Size = collapsed and UDim2.new(0,260,0,42) or UDim2.new(0,260,0,330)
-
-	}):Play()
-
+    collapsed = not collapsed
+    Content.Visible = not collapsed
+    CollapseBtn.Text = collapsed and "+" or "−"
+    TweenService:Create(MainFrame, TweenInfo.new(0.25), {
+        Size = collapsed and UDim2.new(0,260,0,42) or UDim2.new(0,260,0,330)
+    }):Play()
 end)
 
---================ AIMBOT (HEAD) =================
-local aimbot = false
-
+--================ AIMBOT =================
 local function GetClosestTarget()
     local closest, shortest = nil, FOV_RADIUS
     
@@ -324,66 +210,63 @@ local function GetClosestTarget()
                         - Vector2.new(pos.X, pos.Y)).Magnitude
                     
                     if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
+                        local canAim = true
                         
-                                              -- WALL CHECK MỚI - CHỈ CHẶN TƯỜNG GIỮA
-local canAim = true
-
-if WALLCHECK_ENABLED then
-    local function IsRealWall(part)
-        if not part then return false end
-        
-        -- Danh sách material là tường thật
-        local solidMaterials = {
-            [Enum.Material.Concrete] = true,
-            [Enum.Material.Brick] = true,
-            [Enum.Material.Stone] = true,
-            [Enum.Material.Granite] = true,
-            [Enum.Material.Marble] = true,
-            [Enum.Material.Slate] = true,
-            [Enum.Material.WoodPlanks] = true,
-            [Enum.Material.Metal] = true,
-            [Enum.Material.Cobblestone] = true,
-            [Enum.Material.Pavement] = true,
-            [Enum.Material.Rock] = true,
-        }
-        
-        return solidMaterials[part.Material] or false
-    end
-    
-    -- Filter chỉ mình và địch (bỏ qua nhân vật khác)
-    local filterList = {player.Character, plr.Character}
-    
-    local startPos = Camera.CFrame.Position
-    local direction = (head.Position - startPos).Unit * 1000
-    
-    local rayParams = RaycastParams.new()
-    rayParams.FilterType = Enum.RaycastFilterType.Blacklist
-    rayParams.FilterDescendantsInstances = filterList
-    
-    local rayResult = workspace:Raycast(startPos, direction, rayParams)
-    
-    if rayResult then
-        local hitPart = rayResult.Instance
-        local hitPos = rayResult.Position
-        
-        -- Tính khoảng cách từ camera tới địch và tới tường
-        local distToEnemy = (head.Position - startPos).Magnitude
-        local distToWall = (hitPos - startPos).Magnitude
-        
-        -- Nếu trúng tường và tường ở GIỮA (gần hơn địch)
-        if IsRealWall(hitPart) and distToWall < distToEnemy then
-            canAim = false -- Có tường ở giữa, không aim
+                        if WALLCHECK_ENABLED then
+                            local function IsRealWall(part)
+                                if not part then return false end
+                                
+                                local solidMaterials = {
+                                    [Enum.Material.Concrete] = true,
+                                    [Enum.Material.Brick] = true,
+                                    [Enum.Material.Stone] = true,
+                                    [Enum.Material.Granite] = true,
+                                    [Enum.Material.Marble] = true,
+                                    [Enum.Material.Slate] = true,
+                                    [Enum.Material.WoodPlanks] = true,
+                                    [Enum.Material.Metal] = true,
+                                    [Enum.Material.Cobblestone] = true,
+                                    [Enum.Material.Pavement] = true,
+                                    [Enum.Material.Rock] = true,
+                                }
+                                
+                                return solidMaterials[part.Material] or false
+                            end
+                            
+                            local filterList = {player.Character, plr.Character}
+                            local startPos = Camera.CFrame.Position
+                            local direction = (head.Position - startPos).Unit * 1000
+                            
+                            local rayParams = RaycastParams.new()
+                            rayParams.FilterType = Enum.RaycastFilterType.Blacklist
+                            rayParams.FilterDescendantsInstances = filterList
+                            
+                            local rayResult = workspace:Raycast(startPos, direction, rayParams)
+                            
+                            if rayResult then
+                                local hitPart = rayResult.Instance
+                                local hitPos = rayResult.Position
+                                local distToEnemy = (head.Position - startPos).Magnitude
+                                local distToWall = (hitPos - startPos).Magnitude
+                                
+                                if IsRealWall(hitPart) and distToWall < distToEnemy then
+                                    canAim = false
+                                end
+                            end
+                        end
+                        
+                        if canAim then
+                            shortest, closest = dist, head
+                        end
+                    end
+                end
+            end
         end
-        -- Nếu tường ở sau lưng địch (xa hơn) thì vẫn aim
     end
+    
+    return closest
 end
 
--- CHỈ AIM NẾU CAN AIM = TRUE
-if canAim then
-    shortest, closest = dist, head
-						end
-					end
--- AIMBOT LOOP
 RunService.RenderStepped:Connect(function()
     if aimbot and FOV_ENABLED then
         local t = GetClosestTarget()
@@ -393,15 +276,12 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- AIMBOT TOGGLE
 AimBtn.MouseButton1Click:Connect(function()
     aimbot = not aimbot
     AimBtn.Text = aimbot and "Aimbot : ON" or "Aimbot : OFF"
 end)
 
--- Thay thế toàn bộ phần ESP (từ dòng "--================ ESP =================" trở đi) bằng code này:
-
---================ ESP FIX (DÙNG BILLBOARD GUI) =================
+--================ ESP FIX =================
 local ESP_Boxes = {}
 
 local function CreateESP_Player(plr)
@@ -455,18 +335,15 @@ local function RemoveESP_Player(plr)
     end
 end
 
--- Tạo ESP cho các player hiện tại
 for _, plr in ipairs(Players:GetPlayers()) do
     if plr ~= player then
         CreateESP_Player(plr)
     end
 end
 
--- Kết nối sự kiện
 Players.PlayerAdded:Connect(CreateESP_Player)
 Players.PlayerRemoving:Connect(RemoveESP_Player)
 
--- Update kích thước box dựa trên khoảng cách
 RunService.RenderStepped:Connect(function()
     if not ESP_ENABLED then
         for _, billboard in pairs(ESP_Boxes) do
@@ -510,7 +387,6 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- Thêm chức năng bật/tắt màu sắc (tùy chọn)
 EspBtn.MouseButton1Click:Connect(function()
     ESP_ENABLED = not ESP_ENABLED
     EspBtn.Text = ESP_ENABLED and "ESP : ON" or "ESP : OFF"
@@ -528,15 +404,10 @@ EspBtn.MouseButton1Click:Connect(function()
     end
 end)
 
---================ FOV UPDATE (GUI) =================
+--================ FOV UPDATE =================
 RunService.RenderStepped:Connect(function()
     if not Camera then return end
-
-    FOVFrame.Position = UDim2.new(
-        0.5, 0,
-        0.5, -35
-    )
-
+    FOVFrame.Position = UDim2.new(0.5, 0, 0.5, -35)
     FOVFrame.Size = UDim2.fromOffset(FOV_RADIUS*2, FOV_RADIUS*2)
 end)
 
