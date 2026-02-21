@@ -328,12 +328,12 @@ local function GetClosestTarget()
                         )
                         
                         -- Nếu có raycast và không trúng địch => có tường
-                        if rayResult then
-                            local hitPart = rayResult.Instance
-                            if hitPart and not hitPart:IsDescendantOf(plr.Character) then
-                                canAim = false -- Có tường, không aim
-                            end
-                        end
+                        --if rayResult then
+                           -- local hitPart = rayResult.Instance
+                          --  if hitPart and not hitPart:IsDescendantOf(plr.Character) then
+                               -- canAim = false -- Có tường, không aim
+                          --  end
+                      --  end
                         
                         -- CHỈ AIM NẾU CAN AIM = TRUE
                         if canAim then
