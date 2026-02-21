@@ -263,7 +263,7 @@ local function GetClosestTarget()
                         if canAim then
                             shortest, closest = dist, head
                         end
-                    end  -- <<< END QUAN TRỌNG
+                    end
                 end
             end
         end
