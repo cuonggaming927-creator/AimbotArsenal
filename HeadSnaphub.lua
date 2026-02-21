@@ -356,82 +356,147 @@ AimBtn.MouseButton1Click:Connect(function()
 
 end)
 
---================ ESP =================
+-- Thay thế toàn bộ phần ESP (từ dòng "--================ ESP =================" trở đi) bằng code này:
 
-local function CreateESP(plr)
+--================ ESP FIX (DÙNG BILLBOARD GUI) =================
+local ESP_Boxes = {} -- Lưu các GUI cho mỗi player
 
-	local b = Drawing.new("Square")
-
-	b.Filled = false
-
-	b.Color = ESP_COLOR
-
-	b.Thickness = ESP_THICKNESS
-
-	b.Visible = false
-
-	Boxes[plr] = b
-
+-- Hàm tạo ESP Box bằng GUI
+local function CreateESP_Player(plr)
+    if plr == player then return end
+    
+    -- Tạo BillboardGui
+    local Billboard = Instance.new("BillboardGui")
+    Billboard.Name = "ESP_"..plr.Name
+    Billboard.AlwaysOnTop = true
+    Billboard.LightInfluence = 0
+    Billboard.Size = UDim2.new(0, 50, 0, 100) -- Kích thước sẽ được điều chỉnh sau
+    Billboard.StudsOffset = Vector3.new(0, 2, 0)
+    Billboard.Adornee = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") or nil
+    
+    -- Tạo Frame chính (vẽ box)
+    local Box = Instance.new("Frame", Billboard)
+    Box.Name = "Box"
+    Box.BackgroundColor3 = ESP_COLOR
+    Box.BackgroundTransparency = 1 -- Trong suốt để chỉ thấy viền
+    Box.BorderSizePixel = 0
+    Box.Size = UDim2.new(1, 0, 1, 0)
+    
+    -- Tạo viền (UIStroke)
+    local Stroke = Instance.new("UIStroke", Box)
+    Stroke.Color = ESP_COLOR
+    Stroke.Thickness = ESP_THICKNESS
+    Stroke.Transparency = 0
+    
+    -- Tạo góc bo tròn (tùy chọn)
+    local Corner = Instance.new("UICorner", Box)
+    Corner.CornerRadius = UDim.new(0, 4)
+    
+    -- Kết nối với nhân vật (phòng khi nhân vật thay đổi)
+    local function onCharacterAdded(char)
+        task.wait(0.1) -- Chờ để load
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            Billboard.Adornee = hrp
+        end
+    end
+    
+    if plr.Character then
+        onCharacterAdded(plr.Character)
+    end
+    plr.CharacterAdded:Connect(onCharacterAdded)
+    
+    -- Lưu lại
+    ESP_Boxes[plr] = Billboard
+    Billboard.Parent = game:GetService("CoreGui") -- Hoặc player.PlayerGui tùy executer
 end
 
-for _,p in ipairs(Players:GetPlayers()) do
-
-	if p ~= player then CreateESP(p) end
-
+-- Xóa ESP khi player rời
+local function RemoveESP_Player(plr)
+    local billboard = ESP_Boxes[plr]
+    if billboard then
+        billboard:Destroy()
+        ESP_Boxes[plr] = nil
+    end
 end
 
-Players.PlayerAdded:Connect(CreateESP)
+-- Tạo ESP cho các player hiện tại
+for _, plr in ipairs(Players:GetPlayers()) do
+    if plr ~= player then
+        CreateESP_Player(plr)
+    end
+end
 
-Players.PlayerRemoving:Connect(function(p)
+-- Kết nối sự kiện
+Players.PlayerAdded:Connect(CreateESP_Player)
+Players.PlayerRemoving:Connect(RemoveESP_Player)
 
-	if Boxes[p] then Boxes[p]:Remove() Boxes[p]=nil end
-
-end)
-
+-- Update kích thước box dựa trên khoảng cách
 RunService.RenderStepped:Connect(function()
-
-	if not ESP_ENABLED then return end
-
-	for p,b in pairs(Boxes) do
-
-		local c = p.Character
-
-		local r = c and c:FindFirstChild("HumanoidRootPart")
-
-		local h = c and c:FindFirstChild("Humanoid")
-
-		if r and h and h.Health > 0 then
-
-			local pos,on = Camera:WorldToViewportPoint(r.Position)
-
-			if on then
-
-				local d = (Camera.CFrame.Position - r.Position).Magnitude
-
-				local hgt = math.clamp(2000/d,25,300)
-
-				b.Size = Vector2.new(hgt/2,hgt)
-
-				b.Position = Vector2.new(pos.X-b.Size.X/2,pos.Y-b.Size.Y/2)
-
-				b.Visible = true
-
-			else b.Visible = false end
-
-		else b.Visible = false end
-
-	end
-
+    if not ESP_ENABLED then
+        -- Ẩn tất cả nếu tắt ESP
+        for _, billboard in pairs(ESP_Boxes) do
+            if billboard then
+                local box = billboard:FindFirstChild("Box")
+                if box then
+                    local stroke = box:FindFirstChildOfClass("UIStroke")
+                    if stroke then
+                        stroke.Transparency = 1
+                    end
+                end
+            end
+        end
+        return
+    end
+    
+    for plr, billboard in pairs(ESP_Boxes) do
+        if billboard and plr.Character then
+            local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
+            local hum = plr.Character:FindFirstChild("Humanoid")
+            
+            if hrp and hum and hum.Health > 0 then
+                -- Tính khoảng cách để điều chỉnh kích thước
+                local dist = (Camera.CFrame.Position - hrp.Position).Magnitude
+                local sizeMultiplier = math.clamp(2000 / dist, 0.5, 3)
+                
+                -- Điều chỉnh kích thước Billboard
+                billboard.Size = UDim2.new(0, 40 * sizeMultiplier, 0, 80 * sizeMultiplier)
+                
+                -- Hiện box
+                local box = billboard:FindFirstChild("Box")
+                if box then
+                    local stroke = box:FindFirstChildOfClass("UIStroke")
+                    if stroke then
+                        stroke.Transparency = 0
+                        stroke.Color = ESP_COLOR
+                    end
+                end
+                billboard.Enabled = true
+            else
+                billboard.Enabled = false
+            end
+        end
+    end
 end)
 
+-- Thêm chức năng bật/tắt màu sắc (tùy chọn)
 EspBtn.MouseButton1Click:Connect(function()
-
-	ESP_ENABLED = not ESP_ENABLED
-
-	EspBtn.Text = ESP_ENABLED and "ESP : ON" or "ESP : OFF"
-
+    ESP_ENABLED = not ESP_ENABLED
+    EspBtn.Text = ESP_ENABLED and "ESP : ON" or "ESP : OFF"
+    
+    -- Cập nhật trạng thái hiển thị
+    for _, billboard in pairs(ESP_Boxes) do
+        if billboard then
+            local box = billboard:FindFirstChild("Box")
+            if box then
+                local stroke = box:FindFirstChildOfClass("UIStroke")
+                if stroke then
+                    stroke.Transparency = ESP_ENABLED and 0 or 1
+                end
+            end
+        end
+    end
 end)
-
 --================ FOV UPDATE (GUI) =================
 
 RunService.RenderStepped:Connect(function()
