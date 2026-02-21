@@ -295,6 +295,7 @@ CollapseBtn.MouseButton1Click:Connect(function()
 end)
 
 --================ AIMBOT (HEAD) =================
+local aimbot = false
 
 local function GetClosestTarget()
     local closest, shortest = nil, FOV_RADIUS
