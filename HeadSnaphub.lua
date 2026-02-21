@@ -172,6 +172,11 @@ local AimBtn = MakeButton("Aimbot : OFF", 10)
 local EspBtn = MakeButton("ESP : ON", 62)
 
 local FovBtn = MakeButton("FOV : ON", 114)
+FovBtn.MouseButton1Click:Connect(function()
+    FOV_ENABLED = not FOV_ENABLED
+    FovBtn.Text = FOV_ENABLED and "FOV : ON" or "FOV : OFF"
+    FOVFrame.Visible = FOV_ENABLED  -- Set trực tiếp
+end)
 --================ FOV +/- BUTTON =================
 
 local FovPlus = Instance.new("TextButton", Content)
@@ -498,21 +503,19 @@ EspBtn.MouseButton1Click:Connect(function()
     end
 end)
 --================ FOV UPDATE (GUI) =================
-
 RunService.RenderStepped:Connect(function()
     if not Camera then return end
-
-    -- Lấy kích thước màn hình thực tế
-    local screenSize = Camera.ViewportSize
     
-    -- Set position với offset + thêm tùy chỉnh
+    -- Cập nhật vị trí và kích thước (không set visibility ở đây nữa)
     FOVFrame.Position = UDim2.new(
-        0.5, 0,  -- X = 50% màn hình
-        0.5, -35 -- Y = 50% màn hình - 35px (kéo lên trên 35 pixel)
+        0.5, 0,
+        0.5, -35
     )
     
     FOVFrame.Size = UDim2.fromOffset(FOV_RADIUS*2, FOV_RADIUS*2)
-    FOVFrame.Visible = FOV_ENABLED
+    
+    -- KHÔNG set FOVFrame.Visible ở đây nữa, để nó giữ nguyên trạng thái từ nút bấm
+    -- FOVFrame.Visible = FOV_ENABLED  <-- XÓA DÒNG NÀY
 end)
 --================ FOV +/- LOGIC =================
 
