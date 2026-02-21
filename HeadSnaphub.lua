@@ -296,46 +296,59 @@ end)
 
 --================ AIMBOT (HEAD) =================
 
-local aimbot = false
-
 local function GetClosestTarget()
-
-	local closest, shortest = nil, FOV_RADIUS
-
-	for _,plr in ipairs(Players:GetPlayers()) do
-
-		if plr ~= player and plr.Character then
-
-			local hum = plr.Character:FindFirstChild("Humanoid")
-
-			local head = plr.Character:FindFirstChild("Head")
-
-			if hum and hum.Health > 0 and head then
-
-				local pos, onscreen = Camera:WorldToViewportPoint(head.Position)
-
-				if onscreen then
-
-					local dist = (Vector2.new(Camera.ViewportSize.X/2,Camera.ViewportSize.Y/2)
-
-						- Vector2.new(pos.X,pos.Y)).Magnitude
-
-					 if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
-
-						shortest, closest = dist, head
-
-					end
-
-				end
-
-			end
-
-		end
-
-	end
-
-	return closest
-
+    local closest, shortest = nil, FOV_RADIUS
+    
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= player and plr.Character then
+            local hum = plr.Character:FindFirstChild("Humanoid")
+            local head = plr.Character:FindFirstChild("Head")
+            
+            if hum and hum.Health > 0 and head then
+                local pos, onscreen = Camera:WorldToViewportPoint(head.Position)
+                
+                if onscreen then
+                    local dist = (Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2) 
+                        - Vector2.new(pos.X, pos.Y)).Magnitude
+                    
+                    -- KIỂM TRA FOV
+                    if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
+                        
+                        -- 🔥 THÊM WALL CHECK Ở ĐÂY 🔥
+                        local wallCheck = true
+                        local rayParams = RaycastParams.new()
+                        rayParams.FilterType = Enum.RaycastFilterType.Blacklist
+                        rayParams.FilterDescendantsInstances = {player.Character, plr.Character}
+                        
+                        local rayResult = workspace:Raycast(
+                            Camera.CFrame.Position,
+                            (head.Position - Camera.CFrame.Position).Unit * 1000,
+                            rayParams
+                        )
+                        
+                        -- Nếu không có raycast hoặc raycast trúng địch => không có tường
+                        if rayResult then
+                            local hitPart = rayResult.Instance
+                            if hitPart and hitPart:IsDescendantOf(plr.Character) then
+                                wallCheck = true -- Trúng địch, không tường
+                            else
+                                wallCheck = false -- Trúng tường
+                            end
+                        else
+                            wallCheck = true -- Không trúng gì, chắc chắn không tường
+                        end
+                        
+                        -- CHỈ AIM NẾU WALLCHECK = TRUE
+                        if wallCheck then
+                            shortest, closest = dist, head
+                        end
+                    end
+                end
+            end
+        end
+    end
+    
+    return closest
 end
 
 RunService.RenderStepped:Connect(function()
