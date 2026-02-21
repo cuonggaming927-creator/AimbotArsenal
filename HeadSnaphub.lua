@@ -315,25 +315,64 @@ local function GetClosestTarget()
                     -- KIỂM TRA FOV
                     if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
                         
-                        -- 🔥 WALL CHECK - LUÔN BẬT, KHÔNG CÓ NÚT 🔥
-                        local canAim = true
-                        local rayParams = RaycastParams.new()
-                        rayParams.FilterType = Enum.RaycastFilterType.Blacklist
-                        rayParams.FilterDescendantsInstances = {player.Character, plr.Character}
-                        
-                        local rayResult = workspace:Raycast(
-                            Camera.CFrame.Position,
-                            (head.Position - Camera.CFrame.Position).Unit * 1000,
-                            rayParams
-                        )
-                        
-                        -- Nếu có raycast và không trúng địch => có tường
-                        --if rayResult then
-                           -- local hitPart = rayResult.Instance
-                          --  if hitPart and not hitPart:IsDescendantOf(plr.Character) then
-                               -- canAim = false -- Có tường, không aim
-                          --  end
-                      --  end
+                        -- 🔥 WALL CHECK MỚI - CHỈ CHẶN TƯỜNG ĐẶC 🔥
+local canAim = true
+
+-- Hàm kiểm tra vật liệu có phải tường không
+local function IsSolidWall(part)
+    if not part then return false end
+    
+    -- Danh sách vật liệu là tường đặc
+    local solidMaterials = {
+        [Enum.Material.Concrete] = true,
+        [Enum.Material.Brick] = true,
+        [Enum.Material.Stone] = true,
+        [Enum.Material.Granite] = true,
+        [Enum.Material.Marble] = true,
+        [Enum.Material.Slate] = true,
+        [Enum.Material.WoodPlanks] = true,
+        [Enum.Material.Metal] = true,
+        [Enum.Material.Cobblestone] = true,
+        [Enum.Material.Pavement] = true,
+        [Enum.Material.Sandstone] = true,
+        [Enum.Material.Limestone] = true,
+        [Enum.Material.Rock] = true,
+        [Enum.Material.Basalt] = true,
+        [Enum.Material.CorrodedMetal] = true,
+        [Enum.Material.DiamondPlate] = true,
+    }
+    
+    return solidMaterials[part.Material] or false
+end
+
+-- Tạo danh sách filter (tất cả nhân vật)
+local allCharacters = {player.Character}
+for _, p in ipairs(Players:GetPlayers()) do
+    if p.Character and p ~= player then
+        table.insert(allCharacters, p.Character)
+    end
+end
+
+-- Raycast từ camera (dịch ra 2 studs để không trúng chính mình)
+local startPos = Camera.CFrame.Position + Camera.CFrame.LookVector * 2
+local direction = (head.Position - startPos).Unit * 1000
+
+local rayParams = RaycastParams.new()
+rayParams.FilterType = Enum.RaycastFilterType.Blacklist
+rayParams.FilterDescendantsInstances = allCharacters
+
+local rayResult = workspace:Raycast(startPos, direction, rayParams)
+
+-- Nếu có raycast
+if rayResult then
+    local hitPart = rayResult.Instance
+    
+    -- CHỈ CHẶN NẾU LÀ TƯỜNG ĐẶC
+    if hitPart and IsSolidWall(hitPart) then
+        canAim = false -- Có tường đặc, không aim
+    end
+    -- Còn lại (kính, cây, hàng rào, nhân vật khác) vẫn aim
+end
                         
                         -- CHỈ AIM NẾU CAN AIM = TRUE
                         if canAim then
