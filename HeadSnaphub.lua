@@ -312,69 +312,81 @@ local function GetClosestTarget()
                     local dist = (Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2) 
                         - Vector2.new(pos.X, pos.Y)).Magnitude
                     
-                    -- KIỂM TRA FOV
                     if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
                         
-                        -- 🔥 WALL CHECK MỚI - CHỈ CHẶN TƯỜNG ĐẶC 🔥
-local canAim = true
-
--- Hàm kiểm tra vật liệu có phải tường không
-local function IsSolidWall(part)
-    if not part then return false end
-    
-    -- Danh sách vật liệu là tường đặc
-    local solidMaterials = {
-        [Enum.Material.Concrete] = true,
-        [Enum.Material.Brick] = true,
-        [Enum.Material.Stone] = true,
-        [Enum.Material.Granite] = true,
-        [Enum.Material.Marble] = true,
-        [Enum.Material.Slate] = true,
-        [Enum.Material.WoodPlanks] = true,
-        [Enum.Material.Metal] = true,
-        [Enum.Material.Cobblestone] = true,
-        [Enum.Material.Pavement] = true,
-        [Enum.Material.Sandstone] = true,
-        [Enum.Material.Limestone] = true,
-        [Enum.Material.Rock] = true,
-        [Enum.Material.Basalt] = true,
-        [Enum.Material.CorrodedMetal] = true,
-        [Enum.Material.DiamondPlate] = true,
-    }
-    
-    return solidMaterials[part.Material] or false
-end
-
--- Tạo danh sách filter (tất cả nhân vật)
-local allCharacters = {player.Character}
-for _, p in ipairs(Players:GetPlayers()) do
-    if p.Character and p ~= player then
-        table.insert(allCharacters, p.Character)
-    end
-end
-
--- Raycast từ camera (dịch ra 2 studs để không trúng chính mình)
-local startPos = Camera.CFrame.Position + Camera.CFrame.LookVector * 2
-local direction = (head.Position - startPos).Unit * 1000
-
-local rayParams = RaycastParams.new()
-rayParams.FilterType = Enum.RaycastFilterType.Blacklist
-rayParams.FilterDescendantsInstances = allCharacters
-
-local rayResult = workspace:Raycast(startPos, direction, rayParams)
-
--- Nếu có raycast
-if rayResult then
-    local hitPart = rayResult.Instance
-    
-    -- CHỈ CHẶN NẾU LÀ TƯỜNG ĐẶC
-    if hitPart and IsSolidWall(hitPart) then
-        canAim = false -- Có tường đặc, không aim
-    end
-    -- Còn lại (kính, cây, hàng rào, nhân vật khác) vẫn aim
-end
+                        -- 🔥 WALL CHECK SIÊU CẤP 🔥
+                        local canAim = true
                         
-                        -- CHỈ AIM NẾU CAN AIM = TRUE
+                        local function IsRealWall(part)
+                            if not part then return false end
+                            if part == workspace.Terrain then return true end
+                            
+                            local solidMaterials = {
+                                [Enum.Material.Concrete] = true,
+                                [Enum.Material.Brick] = true,
+                                [Enum.Material.Stone] = true,
+                                [Enum.Material.Granite] = true,
+                                [Enum.Material.Marble] = true,
+                                [Enum.Material.Slate] = true,
+                                [Enum.Material.WoodPlanks] = true,
+                                [Enum.Material.Metal] = true,
+                                [Enum.Material.Cobblestone] = true,
+                                [Enum.Material.Pavement] = true,
+                                [Enum.Material.Sandstone] = true,
+                                [Enum.Material.Limestone] = true,
+                                [Enum.Material.Rock] = true,
+                                [Enum.Material.Basalt] = true,
+                                [Enum.Material.CorrodedMetal] = true,
+                                [Enum.Material.DiamondPlate] = true,
+                                [Enum.Material.Plaster] = true,
+                                [Enum.Material.CeramicTiles] = true,
+                                [Enum.Material.RoofShingles] = true,
+                                [Enum.Material.Wood] = true,
+                            }
+                            
+                            if solidMaterials[part.Material] then return true end
+                            
+                            if part:IsA("MeshPart") then
+                                local size = part.Size
+                                local thickness = math.min(size.X, size.Y, size.Z)
+                                if thickness > 1 then return true end
+                            end
+                            
+                            if part:IsA("UnionOperation") then return true end
+                            
+                            if part:IsA("Part") then
+                                local size = part.Size
+                                local thickness = math.min(size.X, size.Y, size.Z)
+                                if thickness > 2 then return true end
+                                if thickness > 0.5 and part.Transparency < 0.5 then return true end
+                            end
+                            
+                            return false
+                        end
+                        
+                        local allCharacters = {player.Character}
+                        for _, p in ipairs(Players:GetPlayers()) do
+                            if p.Character and p ~= player then
+                                table.insert(allCharacters, p.Character)
+                            end
+                        end
+                        
+                        local startPos = Camera.CFrame.Position + Camera.CFrame.LookVector * 2
+                        local direction = (head.Position - startPos).Unit * 1000
+                        
+                        local rayParams = RaycastParams.new()
+                        rayParams.FilterType = Enum.RaycastFilterType.Blacklist
+                        rayParams.FilterDescendantsInstances = allCharacters
+                        
+                        local rayResult = workspace:Raycast(startPos, direction, rayParams)
+                        
+                        if rayResult then
+                            local hitPart = rayResult.Instance
+                            if IsRealWall(hitPart) then
+                                canAim = false
+                            end
+                        end
+                        
                         if canAim then
                             shortest, closest = dist, head
                         end
@@ -387,27 +399,20 @@ end
     return closest
 end
 
+-- AIMBOT LOOP
 RunService.RenderStepped:Connect(function()
-	if aimbot and FOV_ENABLED then
-
-		local t = GetClosestTarget()
-
-		if t then
-
-			Camera.CFrame = CFrame.new(Camera.CFrame.Position, t.Position)
-
-		end
-
-	end
-
+    if aimbot and FOV_ENABLED then
+        local t = GetClosestTarget()
+        if t then
+            Camera.CFrame = CFrame.new(Camera.CFrame.Position, t.Position)
+        end
+    end
 end)
 
+-- AIMBOT TOGGLE
 AimBtn.MouseButton1Click:Connect(function()
-
-	aimbot = not aimbot
-
-	AimBtn.Text = aimbot and "Aimbot : ON" or "Aimbot : OFF"
-
+    aimbot = not aimbot
+    AimBtn.Text = aimbot and "Aimbot : ON" or "Aimbot : OFF"
 end)
 
 -- Thay thế toàn bộ phần ESP (từ dòng "--================ ESP =================" trở đi) bằng code này:
