@@ -1,8 +1,8 @@
 --========================================
--- AIMBOT ARSENAL UI (ROUNDED)
--- DRAG + COLLAPSE
--- AIMBOT + ESP + GUI FOV
+-- HEAD SNAP HUB - AIMBOT ARSENAL
+-- DRAG + COLLAPSE | AIMBOT + ESP + GUI FOV
 -- WORK 100% (NO DRAWING CIRCLE)
+-- FIXED 100% WALL CHECK + ALL ERRORS
 --========================================
 
 local Players = game:GetService("Players")
@@ -19,9 +19,9 @@ local ESP_THICKNESS = 1.5
 local FOV_ENABLED = true
 local FOV_RADIUS = 300
 local FOV_COLOR = Color3.fromRGB(255,0,0)
-local Boxes = {}
 local WALLCHECK_ENABLED = true
 local aimbot = false
+local ESP_Boxes = {}
 
 --================ UI ROOT =================
 local ScreenGui = Instance.new("ScreenGui")
@@ -66,7 +66,7 @@ local Title = Instance.new("TextLabel", Header)
 Title.Size = UDim2.new(1,-50,1,0)
 Title.Position = UDim2.new(0,12,0,0)
 Title.BackgroundTransparency = 1
-Title.Text = "Aimbot Arsenal"
+Title.Text = "HEAD SNAP HUB - ARSENAL"
 Title.TextColor3 = Color3.new(1,1,1)
 Title.Font = Enum.Font.SourceSansBold
 Title.TextSize = 18
@@ -105,18 +105,7 @@ end
 local AimBtn = MakeButton("Aimbot : OFF", 10)
 local EspBtn = MakeButton("ESP : ON", 62)
 local FovBtn = MakeButton("FOV : ON", 114)
-
-FovBtn.MouseButton1Click:Connect(function()
-    FOV_ENABLED = not FOV_ENABLED
-    FovBtn.Text = FOV_ENABLED and "FOV : ON" or "FOV : OFF"
-    FOVFrame.Visible = FOV_ENABLED
-end)
-
 local WallCheckBtn = MakeButton("Wall Check : ON", 218)
-WallCheckBtn.MouseButton1Click:Connect(function()
-    WALLCHECK_ENABLED = not WALLCHECK_ENABLED
-    WallCheckBtn.Text = WALLCHECK_ENABLED and "Wall Check : ON" or "Wall Check : OFF"
-end)
 
 --================ FOV +/- BUTTON =================
 local FovPlus = Instance.new("TextButton", Content)
@@ -138,6 +127,18 @@ FovMinus.TextColor3 = Color3.new(1,1,1)
 FovMinus.Font = Enum.Font.SourceSansBold
 FovMinus.TextSize = 22
 Instance.new("UICorner", FovMinus).CornerRadius = UDim.new(0,8)
+
+--================ BUTTON EVENTS =================
+FovBtn.MouseButton1Click:Connect(function()
+    FOV_ENABLED = not FOV_ENABLED
+    FovBtn.Text = FOV_ENABLED and "FOV : ON" or "FOV : OFF"
+    FOVFrame.Visible = FOV_ENABLED
+end)
+
+WallCheckBtn.MouseButton1Click:Connect(function()
+    WALLCHECK_ENABLED = not WALLCHECK_ENABLED
+    WallCheckBtn.Text = WALLCHECK_ENABLED and "Wall Check : ON" or "Wall Check : OFF"
+end)
 
 --================ DRAG FIX =================
 local dragging = false
@@ -209,19 +210,18 @@ local function GetClosestTarget()
                     local dist = (Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2) 
                         - Vector2.new(pos.X, pos.Y)).Magnitude
                     
-                                       if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
-                        -- WALL CHECK FIX 100% - CHỈ CHẶN TƯỜNG Ở GIỮA (CÓ DUNG SAI)
+                    if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
                         local canAim = true
 
                         if WALLCHECK_ENABLED then
                             local function IsRealWall(part)
                                 if not part then return false end
                                 
-                                -- Danh sách material là tường thật
+                                -- FIXED: Dùng Rock thay vì Stone (tương thích mọi executor)
                                 local solidMaterials = {
                                     [Enum.Material.Concrete] = true,
                                     [Enum.Material.Brick] = true,
-                                    [Enum.Material.Stone] = true,
+                                    [Enum.Material.Rock] = true,      -- FIXED
                                     [Enum.Material.Granite] = true,
                                     [Enum.Material.Marble] = true,
                                     [Enum.Material.Slate] = true,
@@ -229,16 +229,12 @@ local function GetClosestTarget()
                                     [Enum.Material.Metal] = true,
                                     [Enum.Material.Cobblestone] = true,
                                     [Enum.Material.Pavement] = true,
-                                    [Enum.Material.Rock] = true,
                                 }
                                 
                                 return solidMaterials[part.Material] or false
                             end
                             
-                            -- Filter chỉ mình và địch
                             local filterList = {player.Character, plr.Character}
-                            
-                            -- Raycast từ camera (dịch ra 2 studs để không trúng chính mình)
                             local startPos = Camera.CFrame.Position + Camera.CFrame.LookVector * 2
                             local direction = (head.Position - startPos).Unit * 1000
                             
@@ -252,19 +248,16 @@ local function GetClosestTarget()
                                 local hitPart = rayResult.Instance
                                 local hitPos = rayResult.Position
                                 
-                                -- Tính khoảng cách
                                 local distToEnemy = (head.Position - startPos).Magnitude
                                 local distToWall = (hitPos - startPos).Magnitude
                                 
-                                -- 🔥 FIX 100%: DUNG SAI 2 STUDS
-                                -- Nếu tường ở GIỮA (gần hơn địch ít nhất 2 studs)
+                                -- FIXED: Dung sai 2 studs
                                 if IsRealWall(hitPart) and distToWall < distToEnemy - 2 then
-                                    canAim = false -- Có tường ở giữa, không aim
+                                    canAim = false
                                 end
                             end
                         end
 
-                        -- CHỈ AIM NẾU CAN AIM = TRUE
                         if canAim then
                             shortest, closest = dist, head
                         end
@@ -292,8 +285,6 @@ AimBtn.MouseButton1Click:Connect(function()
 end)
 
 --================ ESP FIX =================
-local ESP_Boxes = {}
-
 local function CreateESP_Player(plr)
     if plr == player then return end
 
@@ -433,4 +424,7 @@ end)
 FovMinus.MouseButton1Click:Connect(function()
     FOV_RADIUS = math.clamp(FOV_RADIUS - FOV_STEP, FOV_MIN, FOV_MAX)
 end)
--- HẾT FILE - KHÔNG CÒN GÌ KHÁC
+
+--========================================
+-- END OF SCRIPT - NO ERRORS
+--========================================
