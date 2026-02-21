@@ -210,64 +210,59 @@ local function GetClosestTarget()
                     local dist = (Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2) 
                         - Vector2.new(pos.X, pos.Y)).Magnitude
                     
-                    if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
-                        local canAim = true
-
-                        if WALLCHECK_ENABLED then
-                            local function IsRealWall(part)
-                                if not part then return false end
-                                
-                                -- FIXED: Dùng Rock thay vì Stone (tương thích mọi executor)
-                                local solidMaterials = {
-                                    [Enum.Material.Concrete] = true,
-                                    [Enum.Material.Brick] = true,
-                                    [Enum.Material.Rock] = true,      -- FIXED
-                                    [Enum.Material.Granite] = true,
-                                    [Enum.Material.Marble] = true,
-                                    [Enum.Material.Slate] = true,
-                                    [Enum.Material.WoodPlanks] = true,
-                                    [Enum.Material.Metal] = true,
-                                    [Enum.Material.Cobblestone] = true,
-                                    [Enum.Material.Pavement] = true,
-                                }
-                                
-                                return solidMaterials[part.Material] or false
-                            end
-                            
-                            local filterList = {player.Character, plr.Character}
-                            local startPos = Camera.CFrame.Position + Camera.CFrame.LookVector * 2
-                            local direction = (head.Position - startPos).Unit * 1000
-                            
-                            local rayParams = RaycastParams.new()
-                            rayParams.FilterType = Enum.RaycastFilterType.Blacklist
-                            rayParams.FilterDescendantsInstances = filterList
-                            
-                            local rayResult = workspace:Raycast(startPos, direction, rayParams)
-                            
-                            if rayResult then
-                                local hitPart = rayResult.Instance
-                                local hitPos = rayResult.Position
-                                
-                                local distToEnemy = (head.Position - startPos).Magnitude
-                                local distToWall = (hitPos - startPos).Magnitude
-                                
-                                -- FIXED: Dung sai 2 studs
-                                if IsRealWall(hitPart) and distToWall < distToEnemy - 2 then
-                                    canAim = false
-                                end
-                            end
-                        end
-
-                        if canAim then
-                            shortest, closest = dist, head
-                        end
-                    end
-                end
+                   if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
+    local canAim = true
+    
+    if WALLCHECK_ENABLED then
+        -- Filter chỉ mình và địch
+        local filterList = {player.Character, plr.Character}
+        local startPos = Camera.CFrame.Position + Camera.CFrame.LookVector * 2
+        local direction = (head.Position - startPos).Unit * 1000
+        
+        local rayParams = RaycastParams.new()
+        rayParams.FilterType = Enum.RaycastFilterType.Blacklist
+        rayParams.FilterDescendantsInstances = filterList
+        
+        local rayResult = workspace:Raycast(startPos, direction, rayParams)
+        
+        if rayResult then
+            local hitPart = rayResult.Instance
+            local hitPos = rayResult.Position
+            local distToEnemy = (head.Position - startPos).Magnitude
+            local distToWall = (hitPos - startPos).Magnitude
+            
+            -- Danh sách material tường thật
+            local solidMaterials = {
+                [Enum.Material.Concrete] = true,
+                [Enum.Material.Brick] = true,
+                [Enum.Material.Rock] = true,
+                [Enum.Material.Granite] = true,
+                [Enum.Material.Marble] = true,
+                [Enum.Material.Slate] = true,
+                [Enum.Material.WoodPlanks] = true,
+                [Enum.Material.Metal] = true,
+                [Enum.Material.Cobblestone] = true,
+                [Enum.Material.Pavement] = true,
+                [Enum.Material.Sandstone] = true,
+                [Enum.Material.Limestone] = true,
+                [Enum.Material.Basalt] = true,
+                [Enum.Material.CorrodedMetal] = true,
+                [Enum.Material.DiamondPlate] = true,
+                [Enum.Material.Plaster] = true,
+                [Enum.Material.CeramicTiles] = true,
+                [Enum.Material.RoofShingles] = true,
+                [Enum.Material.Wood] = true,
+            }
+            
+            if solidMaterials[hitPart.Material] and distToWall < distToEnemy then
+                canAim = false
             end
         end
     end
     
-    return closest
+    if canAim then
+        shortest, closest = dist, head
+    end
 end
 
 RunService.RenderStepped:Connect(function()
