@@ -209,69 +209,72 @@ local function GetClosestTarget()
                     local dist = (Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2) 
                         - Vector2.new(pos.X, pos.Y)).Magnitude
                     
-                    if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
+                                       if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
                         -- WALL CHECK FIX 100% - CHỈ CHẶN TƯỜNG Ở GIỮA (CÓ DUNG SAI)
-local canAim = true
+                        local canAim = true
 
-if WALLCHECK_ENABLED then
-    local function IsRealWall(part)
-        if not part then return false end
-        
-        -- Danh sách material là tường thật
-        local solidMaterials = {
-            [Enum.Material.Concrete] = true,
-            [Enum.Material.Brick] = true,
-            [Enum.Material.Stone] = true,
-            [Enum.Material.Granite] = true,
-            [Enum.Material.Marble] = true,
-            [Enum.Material.Slate] = true,
-            [Enum.Material.WoodPlanks] = true,
-            [Enum.Material.Metal] = true,
-            [Enum.Material.Cobblestone] = true,
-            [Enum.Material.Pavement] = true,
-            [Enum.Material.Rock] = true,
-        }
-        
-        return solidMaterials[part.Material] or false
-    end
-    
-    -- Filter chỉ mình và địch
-    local filterList = {player.Character, plr.Character}
-    
-    -- Raycast từ camera (dịch ra 2 studs để không trúng chính mình)
-    local startPos = Camera.CFrame.Position + Camera.CFrame.LookVector * 2
-    local direction = (head.Position - startPos).Unit * 1000
-    
-    local rayParams = RaycastParams.new()
-    rayParams.FilterType = Enum.RaycastFilterType.Blacklist
-    rayParams.FilterDescendantsInstances = filterList
-    
-    local rayResult = workspace:Raycast(startPos, direction, rayParams)
-    
-    if rayResult then
-        local hitPart = rayResult.Instance
-        local hitPos = rayResult.Position
-        
-        -- Tính khoảng cách
-        local distToEnemy = (head.Position - startPos).Magnitude
-        local distToWall = (hitPos - startPos).Magnitude
-        
-        -- 🔥 FIX 100%: DUNG SAI 2 STUDS
-        -- Nếu tường ở GIỮA (gần hơn địch ít nhất 2 studs)
-        if IsRealWall(hitPart) and distToWall < distToEnemy - 2 then
-            canAim = false -- Có tường ở giữa, không aim
-        else
-            -- Các trường hợp vẫn AIM:
-            -- - Tường sau lưng địch (distToWall >= distToEnemy - 2)
-            -- - Địch đứng sát tường (distToWall gần bằng distToEnemy)
-            -- - Không phải tường thật (cây, kính, hàng rào...)
+                        if WALLCHECK_ENABLED then
+                            local function IsRealWall(part)
+                                if not part then return false end
+                                
+                                -- Danh sách material là tường thật
+                                local solidMaterials = {
+                                    [Enum.Material.Concrete] = true,
+                                    [Enum.Material.Brick] = true,
+                                    [Enum.Material.Stone] = true,
+                                    [Enum.Material.Granite] = true,
+                                    [Enum.Material.Marble] = true,
+                                    [Enum.Material.Slate] = true,
+                                    [Enum.Material.WoodPlanks] = true,
+                                    [Enum.Material.Metal] = true,
+                                    [Enum.Material.Cobblestone] = true,
+                                    [Enum.Material.Pavement] = true,
+                                    [Enum.Material.Rock] = true,
+                                }
+                                
+                                return solidMaterials[part.Material] or false
+                            end
+                            
+                            -- Filter chỉ mình và địch
+                            local filterList = {player.Character, plr.Character}
+                            
+                            -- Raycast từ camera (dịch ra 2 studs để không trúng chính mình)
+                            local startPos = Camera.CFrame.Position + Camera.CFrame.LookVector * 2
+                            local direction = (head.Position - startPos).Unit * 1000
+                            
+                            local rayParams = RaycastParams.new()
+                            rayParams.FilterType = Enum.RaycastFilterType.Blacklist
+                            rayParams.FilterDescendantsInstances = filterList
+                            
+                            local rayResult = workspace:Raycast(startPos, direction, rayParams)
+                            
+                            if rayResult then
+                                local hitPart = rayResult.Instance
+                                local hitPos = rayResult.Position
+                                
+                                -- Tính khoảng cách
+                                local distToEnemy = (head.Position - startPos).Magnitude
+                                local distToWall = (hitPos - startPos).Magnitude
+                                
+                                -- 🔥 FIX 100%: DUNG SAI 2 STUDS
+                                -- Nếu tường ở GIỮA (gần hơn địch ít nhất 2 studs)
+                                if IsRealWall(hitPart) and distToWall < distToEnemy - 2 then
+                                    canAim = false -- Có tường ở giữa, không aim
+                                end
+                            end
+                        end
+
+                        -- CHỈ AIM NẾU CAN AIM = TRUE
+                        if canAim then
+                            shortest, closest = dist, head
+                        end
+                    end
+                end
+            end
         end
     end
-end
-
--- CHỈ AIM NẾU CAN AIM = TRUE
-if canAim then
-    shortest, closest = dist, head
+    
+    return closest
 end
 
 RunService.RenderStepped:Connect(function()
@@ -430,3 +433,4 @@ end)
 FovMinus.MouseButton1Click:Connect(function()
     FOV_RADIUS = math.clamp(FOV_RADIUS - FOV_STEP, FOV_MIN, FOV_MAX)
 end)
+-- HẾT FILE - KHÔNG CÒN GÌ KHÁC
