@@ -98,7 +98,7 @@ Instance.new("UICorner", Content).CornerRadius = UDim.new(0,12)
 local TabBar = Instance.new("Frame", Content)
 TabBar.Size = UDim2.new(1, 0, 0, 40)
 TabBar.Position = UDim2.new(0, 0, 0, 0)
-TabBar.BackgroundColor3 = Color3.fromRGB(25, 25, 35)  -- Màu đậm
+TabBar.BackgroundColor3 = Color3.fromRGB(20,20,20)  -- Màu đậm
 TabBar.BorderSizePixel = 0
 
 -- Bo góc trên cho TabBar
@@ -109,7 +109,7 @@ TabBarCorner.CornerRadius = UDim.new(0, 12)
 local MainTab = Instance.new("TextButton", TabBar)
 MainTab.Size = UDim2.new(0, 100, 0, 30)  -- Rộng 100px, cao 30px
 MainTab.Position = UDim2.new(0, 10, 0, 5)  -- Cách trái 10px, cách trên 5px
-MainTab.BackgroundColor3 = Color3.fromRGB(0, 100, 255)  -- Màu xanh (đang chọn)
+MainTab.BackgroundColor3 = Color3.fromRGB(60,60,60)  -- Màu xám (đang chọn)
 MainTab.BorderSizePixel = 0
 MainTab.Text = "MAIN"
 MainTab.TextColor3 = Color3.new(1,1,1)
