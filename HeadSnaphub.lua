@@ -272,7 +272,7 @@ local function CreateESP_Player(plr)
     Billboard.Name = "ESP_"..plr.Name
     Billboard.AlwaysOnTop = true
     Billboard.LightInfluence = 0
-    Billboard.Size = UDim2.new(0, 15, 0, 30)
+    Billboard.Size = UDim2.new(0, 35, 0, 70)
     Billboard.StudsOffset = Vector3.new(0, 2, 0)
     Billboard.Adornee = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") or nil
 
@@ -350,7 +350,7 @@ RunService.RenderStepped:Connect(function()
                 local dist = (Camera.CFrame.Position - hrp.Position).Magnitude
                 local sizeMultiplier = math.clamp(2000 / dist, 0.5, 3)
 
-                billboard.Size = UDim2.new(0, 40 * sizeMultiplier, 0, 80 * sizeMultiplier)
+                billboard.Size = UDim2.new(0, 28 * sizeMultiplier, 0, 56 * sizeMultiplier)
 
                 local box = billboard:FindFirstChild("Box")
                 if box then
