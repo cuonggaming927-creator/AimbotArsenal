@@ -245,7 +245,7 @@ CollapseBtn.MouseButton1Click:Connect(function()
         end
         
         TweenService:Create(MainFrame, TweenInfo.new(0.25), {
-            Size = UDim2.new(0,260,0,42)
+            Size = UDim2.new(0,260,0,350)
         }):Play()
         
     else
