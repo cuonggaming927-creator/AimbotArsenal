@@ -375,8 +375,9 @@ EspBtn.MouseButton1Click:Connect(function()
             local box = billboard:FindFirstChild("Box")
             if box then
                 local stroke = box:FindFirstChildOfClass("UIStroke")
-                if stroke then
-                    stroke.Transparency = ESP_ENABLED and 0 or 1
+                                   if stroke then
+                        stroke.Transparency = ESP_ENABLED and 0 or 1
+                    end
                 end
             end
         end
