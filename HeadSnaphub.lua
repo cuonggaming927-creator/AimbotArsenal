@@ -45,7 +45,7 @@ FOVCorner.CornerRadius = UDim.new(1, 0)
 
 --================ MAIN UI =================
 local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0,260,0,430)
+MainFrame.Size = UDim2.new(0,260,0,350)
 MainFrame.Position = UDim2.new(0.5,-130,0.5,-165)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20,20,20)
 MainFrame.BorderSizePixel = 0
@@ -111,7 +111,7 @@ MainTab.Size = UDim2.new(0, 100, 0, 30)  -- Rộng 100px, cao 30px
 MainTab.Position = UDim2.new(0, 10, 0, 5)  -- Cách trái 10px, cách trên 5px
 MainTab.BackgroundColor3 = Color3.fromRGB(0, 100, 255)  -- Màu xanh (đang chọn)
 MainTab.BorderSizePixel = 0
-MainTab.Text = "🎯 MAIN"
+MainTab.Text = "MAIN"
 MainTab.TextColor3 = Color3.new(1,1,1)
 MainTab.Font = Enum.Font.SourceSansBold
 MainTab.TextSize = 16
