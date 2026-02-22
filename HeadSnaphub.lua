@@ -50,7 +50,7 @@ MainFrame.Position = UDim2.new(0.5,-130,0.5,-165)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20,20,20)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,12)  -- Bo góc MainFrame
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,20)  -- Bo góc MainFrame
 
 -- Viền xanh cho MainFrame
 local MainStroke = Instance.new("UIStroke", MainFrame)
