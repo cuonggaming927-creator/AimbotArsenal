@@ -66,7 +66,7 @@ Header.Active = true
 
 -- BO GÓC NHẸ CHO HEADER (LUÔN CÓ)
 local HeaderCorner = Instance.new("UICorner", Header)
-HeaderCorner.CornerRadius = UDim.new(0, 8)  -- Bo góc 8px (nhẹ hơn MainFrame)
+HeaderCorner.CornerRadius = UDim.new(0, 12)  -- Bo góc 12px (nhẹ hơn MainFrame)
 
 -- KHÔNG VIỀN (sẽ thêm khi thu gọn)
 local Title = Instance.new("TextLabel", Header)
