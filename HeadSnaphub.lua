@@ -264,19 +264,37 @@ AimBtn.MouseButton1Click:Connect(function()
     AimBtn.Text = aimbot and "Aimbot : ON" or "Aimbot : OFF"
 end)
 
---================ ESP FIX =================
--- KHÔNG KHAI BÁO ESP_Boxes Ở ĐÂY NỮA! Đã có ở đầu file
+--================ ESP FIX ALL =================
+local ESP_Boxes = {}
 
 local function CreateESP_Player(plr)
     if plr == player then return end
-
-    -- Đợi character load
+    
+    -- Đợi character load với retry
     local char = plr.Character
+    local retry = 0
+    while not char and retry < 10 do
+        task.wait(0.2)
+        char = plr.Character
+        retry = retry + 1
+    end
+    
     if not char then return end
     
-    -- Lấy HumanoidRootPart để đo kích thước
+    -- Lấy HumanoidRootPart với retry
     local hrp = char:FindFirstChild("HumanoidRootPart")
+    retry = 0
+    while not hrp and retry < 10 do
+        task.wait(0.2)
+        hrp = char:FindFirstChild("HumanoidRootPart")
+        retry = retry + 1
+    end
+    
     if not hrp then return end
+    
+    -- Lấy Humanoid để check health
+    local hum = char:FindFirstChild("Humanoid")
+    if not hum then return end
     
     -- TÍNH KÍCH THƯỚC BOX THEO STUD
     local boxWidth = hrp.Size.X + 2
@@ -290,6 +308,7 @@ local function CreateESP_Player(plr)
     Billboard.Size = UDim2.fromScale(boxWidth, boxHeight)
     Billboard.StudsOffset = Vector3.new(0, hrp.Size.Y * 0.5, 0)
     Billboard.Adornee = hrp
+    Billboard.Enabled = hum.Health > 0
 
     -- TẠO FRAME (BOX)
     local Box = Instance.new("Frame", Billboard)
@@ -309,25 +328,21 @@ local function CreateESP_Player(plr)
     local Corner = Instance.new("UICorner", Box)
     Corner.CornerRadius = UDim.new(0, 4)
 
-    -- XỬ LÝ KHI NHÂN VẬT ĐỔI
-    local function onCharacterAdded(char)
-    task.wait(0.5)  -- Tăng thời gian chờ lên 0.5s
-    local hrp = char:FindFirstChild("HumanoidRootPart")
-    if hrp then
-        Billboard.Adornee = hrp
-    else
-        -- Nếu vẫn không có HRP, thử lại sau 1s
-        task.wait(1)
-        hrp = char:FindFirstChild("HumanoidRootPart")
-        if hrp then
-            Billboard.Adornee = hrp
+    -- XỬ LÝ KHI NHÂN VẬT ĐỔI (RETRY)
+    local function onCharacterAdded(newChar)
+        task.wait(0.5)
+        local newHrp = newChar:FindFirstChild("HumanoidRootPart")
+        if newHrp then
+            Billboard.Adornee = newHrp
+        else
+            task.wait(1)
+            newHrp = newChar:FindFirstChild("HumanoidRootPart")
+            if newHrp then
+                Billboard.Adornee = newHrp
+            end
         end
     end
-end
 
-    if plr.Character then
-        onCharacterAdded(plr.Character)
-    end
     plr.CharacterAdded:Connect(onCharacterAdded)
 
     ESP_Boxes[plr] = Billboard
@@ -344,16 +359,21 @@ end
 
 -- Tạo ESP cho các player hiện tại
 for _, plr in ipairs(Players:GetPlayers()) do
-    if plr ~= player then
+    task.spawn(function()
         CreateESP_Player(plr)
-    end
+    end)
 end
 
 -- Kết nối sự kiện
-Players.PlayerAdded:Connect(CreateESP_Player)
+Players.PlayerAdded:Connect(function(plr)
+    task.spawn(function()
+        CreateESP_Player(plr)
+    end)
+end)
+
 Players.PlayerRemoving:Connect(RemoveESP_Player)
 
--- Update ESP
+-- Update ESP mỗi frame
 RunService.RenderStepped:Connect(function()
     if not ESP_ENABLED then
         for _, billboard in pairs(ESP_Boxes) do
@@ -371,20 +391,25 @@ RunService.RenderStepped:Connect(function()
     end
 
     for plr, billboard in pairs(ESP_Boxes) do
-        if billboard and plr.Character then
-            local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
-            local hum = plr.Character:FindFirstChild("Humanoid")
-
-            if hrp and hum and hum.Health > 0 then
-                local box = billboard:FindFirstChild("Box")
-                if box then
-                    local stroke = box:FindFirstChildOfClass("UIStroke")
-                    if stroke then
-                        stroke.Transparency = 0
-                        stroke.Color = ESP_COLOR
+        if billboard then
+            if plr.Character then
+                local hum = plr.Character:FindFirstChild("Humanoid")
+                local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
+                
+                if hrp and hum and hum.Health > 0 then
+                    -- Cập nhật vị trí (Billboard tự động scale)
+                    local box = billboard:FindFirstChild("Box")
+                    if box then
+                        local stroke = box:FindFirstChildOfClass("UIStroke")
+                        if stroke then
+                            stroke.Transparency = 0
+                            stroke.Color = ESP_COLOR
+                        end
                     end
+                    billboard.Enabled = true
+                else
+                    billboard.Enabled = false
                 end
-                billboard.Enabled = true
             else
                 billboard.Enabled = false
             end
