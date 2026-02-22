@@ -45,7 +45,7 @@ FOVCorner.CornerRadius = UDim.new(1, 0)
 
 --================ MAIN UI =================
 local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0,260,0,330)
+MainFrame.Size = UDim2.new(0,260,0,370)
 MainFrame.Position = UDim2.new(0.5,-130,0.5,-165)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20,20,20)
 MainFrame.BorderSizePixel = 0
