@@ -94,9 +94,40 @@ Content.Position = UDim2.new(0,0,0,42)
 Content.BackgroundColor3 = Color3.fromRGB(15,15,15)
 Content.BorderSizePixel = 0
 Instance.new("UICorner", Content).CornerRadius = UDim.new(0,12)
+-- THANH TAB (CAO 40px)
+local TabBar = Instance.new("Frame", Content)
+TabBar.Size = UDim2.new(1, 0, 0, 40)
+TabBar.Position = UDim2.new(0, 0, 0, 0)
+TabBar.BackgroundColor3 = Color3.fromRGB(25, 25, 35)  -- Màu đậm
+TabBar.BorderSizePixel = 0
 
+-- Bo góc trên cho TabBar
+local TabBarCorner = Instance.new("UICorner", TabBar)
+TabBarCorner.CornerRadius = UDim.new(0, 12)
+
+-- TẠO NÚT TAB "MAIN"
+local MainTab = Instance.new("TextButton", TabBar)
+MainTab.Size = UDim2.new(0, 100, 0, 30)  -- Rộng 100px, cao 30px
+MainTab.Position = UDim2.new(0, 10, 0, 5)  -- Cách trái 10px, cách trên 5px
+MainTab.BackgroundColor3 = Color3.fromRGB(0, 100, 255)  -- Màu xanh (đang chọn)
+MainTab.BorderSizePixel = 0
+MainTab.Text = "🎯 MAIN"
+MainTab.TextColor3 = Color3.new(1,1,1)
+MainTab.Font = Enum.Font.SourceSansBold
+MainTab.TextSize = 16
+Instance.new("UICorner", MainTab).CornerRadius = UDim.new(0, 6)
+
+-- (CÓ THỂ THÊM TAB KHÁC NẾU MUỐN, NHƯNG MÀY CHỈ CẦN 1 TAB)
+-- ========== CONTAINER CỦA TAB MAIN ==========
+local MainContainer = Instance.new("Frame", Content)
+MainContainer.Size = UDim2.new(1, 0, 1, -40)     -- Cao = Content - 40px (trừ phần TabBar)
+MainContainer.Position = UDim2.new(0, 0, 0, 40)  -- Đặt ngay dưới TabBar
+MainContainer.BackgroundColor3 = Color3.fromRGB(15,15,15)  -- Cùng màu với Content
+MainContainer.BackgroundTransparency = 0
+MainContainer.BorderSizePixel = 0
+-- KHÔNG bo góc vì đã có Content bo rồi
 local function MakeButton(text, y)
-    local b = Instance.new("TextButton", Content)
+    local b = Instance.new("TextButton", MainContainer)
     b.Size = UDim2.new(1,-20,0,42)
     b.Position = UDim2.new(0,10,0,y)
     b.BackgroundColor3 = Color3.fromRGB(45,45,45)
@@ -115,7 +146,7 @@ local FovBtn = MakeButton("FOV : ON", 114)
 local WallCheckBtn = MakeButton("Wall Check : ON", 218)
 
 --================ FOV +/- BUTTON =================
-local FovPlus = Instance.new("TextButton", Content)
+local FovPlus = Instance.new("TextButton", MainContainer)
 FovPlus.Size = UDim2.new(0.5,-15,0,36)
 FovPlus.Position = UDim2.new(0,10,0,166)
 FovPlus.BackgroundColor3 = Color3.fromRGB(55,55,55)
@@ -125,7 +156,7 @@ FovPlus.Font = Enum.Font.SourceSansBold
 FovPlus.TextSize = 22
 Instance.new("UICorner", FovPlus).CornerRadius = UDim.new(0,8)
 
-local FovMinus = Instance.new("TextButton", Content)
+local FovMinus = Instance.new("TextButton", MainContainer)
 FovMinus.Size = UDim2.new(0.5,-15,0,36)
 FovMinus.Position = UDim2.new(0.5,5,0,166)
 FovMinus.BackgroundColor3 = Color3.fromRGB(55,55,55)
