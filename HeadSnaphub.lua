@@ -93,7 +93,6 @@ Content.Size = UDim2.new(1,0,1,-42)
 Content.Position = UDim2.new(0,0,0,42)
 Content.BackgroundColor3 = Color3.fromRGB(15,15,15)
 Content.BorderSizePixel = 0
-Instance.new("UICorner", Content).CornerRadius = UDim.new(0,12)
 -- THANH TAB (CAO 40px)
 local TabBar = Instance.new("Frame", Content)
 TabBar.Size = UDim2.new(1, 0, 0, 40)
