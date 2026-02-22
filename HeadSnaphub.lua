@@ -94,6 +94,17 @@ Content.Position = UDim2.new(0,0,0,42)
 Content.BackgroundColor3 = Color3.fromRGB(15,15,15)
 Content.BorderSizePixel = 0
 Instance.new("UICorner", Content).CornerRadius = UDim.new(0,12)
+-- THÊM CHỮ "MAIN" (CÁCH ĐƠN GIẢN NHẤT)
+local MainLabel = Instance.new("TextLabel", Content)
+MainLabel.Size = UDim2.new(1, -20, 0, 25)  -- Rộng trừ 20px hai bên, cao 25px
+MainLabel.Position = UDim2.new(0, 10, 0, 5)  -- Cách trái 10px, cách trên 5px
+MainLabel.BackgroundColor3 = Color3.fromRGB(35, 35, 45)  -- Màu nền xám đậm
+MainLabel.Text = "⚡ MAIN FEATURES ⚡"  -- Chữ hiển thị
+MainLabel.TextColor3 = Color3.fromRGB(0, 150, 255)  -- Màu chữ xanh sáng
+MainLabel.Font = Enum.Font.SourceSansBold  -- Font đậm
+MainLabel.TextSize = 14  -- Cỡ chữ
+MainLabel.TextStrokeTransparency = 0.5  -- Viền chữ mờ
+Instance.new("UICorner", MainLabel).CornerRadius = UDim.new(0, 4)  -- Bo góc 4px
 
 local function MakeButton(text, y)
     local b = Instance.new("TextButton", Content)
@@ -109,15 +120,15 @@ local function MakeButton(text, y)
     return b
 end
 
-local AimBtn = MakeButton("Aimbot : OFF", 10)
-local EspBtn = MakeButton("ESP : ON", 62)
-local FovBtn = MakeButton("FOV : ON", 114)
-local WallCheckBtn = MakeButton("Wall Check : ON", 218)
+local AimBtn = MakeButton("Aimbot : OFF", 35)
+local EspBtn = MakeButton("ESP : ON", 87)
+local FovBtn = MakeButton("FOV : ON", 139)
+local WallCheckBtn = MakeButton("Wall Check : ON", 191)
 
 --================ FOV +/- BUTTON =================
 local FovPlus = Instance.new("TextButton", Content)
 FovPlus.Size = UDim2.new(0.5,-15,0,36)
-FovPlus.Position = UDim2.new(0,10,0,166)
+FovPlus.Position = UDim2.new(0,10,0,191)
 FovPlus.BackgroundColor3 = Color3.fromRGB(55,55,55)
 FovPlus.Text = "+"
 FovPlus.TextColor3 = Color3.new(1,1,1)
@@ -127,7 +138,7 @@ Instance.new("UICorner", FovPlus).CornerRadius = UDim.new(0,8)
 
 local FovMinus = Instance.new("TextButton", Content)
 FovMinus.Size = UDim2.new(0.5,-15,0,36)
-FovMinus.Position = UDim2.new(0.5,5,0,166)
+FovMinus.Position = UDim2.new(0.5,5,0,191)
 FovMinus.BackgroundColor3 = Color3.fromRGB(55,55,55)
 FovMinus.Text = "−"
 FovMinus.TextColor3 = Color3.new(1,1,1)
