@@ -380,9 +380,8 @@ EspBtn.MouseButton1Click:Connect(function()
                     end
                 end
             end
-        end
-    end
-end)
+       end
+  end)
 
 --================ FOV UPDATE =================
 RunService.RenderStepped:Connect(function()
