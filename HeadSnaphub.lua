@@ -124,8 +124,9 @@ MainContainer.Position = UDim2.new(0, 0, 0, 40)  -- Đặt ngay dưới TabBar
 MainContainer.BackgroundColor3 = Color3.fromRGB(15,15,15)  -- Cùng màu với Content
 MainContainer.BackgroundTransparency = 0
 MainContainer.BorderSizePixel = 0
+-- Bo góc
 local MainContainerCorner = Instance.new("UICorner", MainContainer)
-MainContainerCorner.CornerRadius = UDim.new(0, 12)  -- Bo góc 12px
+MainContainerCorner.CornerRadius = UDim.new(0, 12)
 
 local function MakeButton(text, y)
     local b = Instance.new("TextButton", MainContainer)
