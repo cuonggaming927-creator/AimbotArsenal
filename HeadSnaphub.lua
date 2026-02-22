@@ -52,11 +52,6 @@ MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,20)  -- Bo góc MainFrame
 
--- Viền xanh cho MainFrame
-local MainStroke = Instance.new("UIStroke", MainFrame)
-MainStroke.Color = Color3.fromRGB(0, 100, 255)
-MainStroke.Thickness = 2.5
-MainStroke.Transparency = 0  -- Hiện khi bình thường
 -- HEADER (BO GÓC)
 local Header = Instance.new("Frame", MainFrame)
 Header.Size = UDim2.new(1,0,0,42)
@@ -232,17 +227,16 @@ CollapseBtn.MouseButton1Click:Connect(function()
     
     if collapsed then
         -- THU GỌN: Ẩn viền MainFrame, thêm viền cho Header
-        MainStroke.Transparency = 1
         
         -- Thêm viền xanh cho Header (nếu chưa có)
-        if not Header:FindFirstChild("HeaderStroke") then
-            local HeaderStroke = Instance.new("UIStroke", Header)
-            HeaderStroke.Name = "HeaderStroke"
-            HeaderStroke.Color = Color3.fromRGB(0, 100, 255)
-            HeaderStroke.Thickness = 2.5
-        else
-            Header.HeaderStroke.Transparency = 0
-        end
+       -- if not Header:FindFirstChild("HeaderStroke") then
+           -- local HeaderStroke = Instance.new("UIStroke", Header)
+          --  HeaderStroke.Name = "HeaderStroke"
+           -- HeaderStroke.Color = Color3.fromRGB(0, 100, 255)
+          --  HeaderStroke.Thickness = 2.5
+       -- else
+          --  Header.HeaderStroke.Transparency = 0
+      --  end
         
         TweenService:Create(MainFrame, TweenInfo.new(0.25), {
             Size = UDim2.new(0,260,0,42)
@@ -250,7 +244,6 @@ CollapseBtn.MouseButton1Click:Connect(function()
         
     else
         -- MỞ RỘNG: Hiện viền MainFrame, xóa viền Header
-        MainStroke.Transparency = 0
         
         if Header:FindFirstChild("HeaderStroke") then
             Header.HeaderStroke.Transparency = 1
