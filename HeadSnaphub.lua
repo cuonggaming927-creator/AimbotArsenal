@@ -93,6 +93,7 @@ Content.Size = UDim2.new(1,0,1,-42)
 Content.Position = UDim2.new(0,0,0,42)
 Content.BackgroundColor3 = Color3.fromRGB(15,15,15)
 Content.BorderSizePixel = 0
+Instance.new("UICorner", Content).CornerRadius = UDim.new(0,12)
 -- THANH TAB (CAO 40px)
 local TabBar = Instance.new("Frame", Content)
 TabBar.Size = UDim2.new(1, 0, 0, 40)
@@ -124,9 +125,8 @@ MainContainer.Position = UDim2.new(0, 0, 0, 40)  -- Đặt ngay dưới TabBar
 MainContainer.BackgroundColor3 = Color3.fromRGB(15,15,15)  -- Cùng màu với Content
 MainContainer.BackgroundTransparency = 0
 MainContainer.BorderSizePixel = 0
--- Bo góc
 local MainContainerCorner = Instance.new("UICorner", MainContainer)
-MainContainerCorner.CornerRadius = UDim.new(0, 12)
+MainContainerCorner.CornerRadius = UDim.new(0, 12)  -- Bo góc 12px
 
 local function MakeButton(text, y)
     local b = Instance.new("TextButton", MainContainer)
@@ -245,7 +245,7 @@ CollapseBtn.MouseButton1Click:Connect(function()
         end
         
         TweenService:Create(MainFrame, TweenInfo.new(0.25), {
-            Size = UDim2.new(0,260,0,350)
+            Size = UDim2.new(0,260,0,42)
         }):Play()
         
     else
