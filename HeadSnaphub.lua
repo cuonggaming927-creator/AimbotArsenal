@@ -311,12 +311,19 @@ local function CreateESP_Player(plr)
 
     -- XỬ LÝ KHI NHÂN VẬT ĐỔI
     local function onCharacterAdded(char)
-        task.wait(0.1)
-        local hrp = char:FindFirstChild("HumanoidRootPart")
+    task.wait(0.5)  -- Tăng thời gian chờ lên 0.5s
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if hrp then
+        Billboard.Adornee = hrp
+    else
+        -- Nếu vẫn không có HRP, thử lại sau 1s
+        task.wait(1)
+        hrp = char:FindFirstChild("HumanoidRootPart")
         if hrp then
             Billboard.Adornee = hrp
         end
     end
+end
 
     if plr.Character then
         onCharacterAdded(plr.Character)
