@@ -211,39 +211,44 @@ local function GetClosestTarget()
                         - Vector2.new(pos.X, pos.Y)).Magnitude
                     
                     if FOV_ENABLED and dist <= FOV_RADIUS and dist < shortest then
-                        -- Trong hàm GetClosestTarget, sau khi check FOV:
-
-local canAim = true
-
-if WALLCHECK_ENABLED then
-    -- Hàm kiểm tra visibility
-    local function IsVisible(target)
-        local origin = Camera.CFrame.Position
-        local direction = (target.Position - origin).Unit * (target.Position - origin).Magnitude
-        
-        local raycastParams = RaycastParams.new()
-        raycastParams.FilterDescendantsInstances = {player.Character, Camera}
-        raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
-        
-        local result = workspace:Raycast(origin, direction, raycastParams)
-        
-        return result == nil or result.Instance:IsDescendantOf(target.Parent)
-    end
-    
-    if not IsVisible(head) then
-        canAim = false
-    end
-end
-
-if canAim then
-    shortest, closest = dist, head
-end
+                        
+                        local canAim = true
+                        
+                        if WALLCHECK_ENABLED then
+                            local function IsVisible(target)
+                                local origin = Camera.CFrame.Position
+                                local direction = (target.Position - origin).Unit * (target.Position - origin).Magnitude
+                                
+                                local raycastParams = RaycastParams.new()
+                                raycastParams.FilterDescendantsInstances = {player.Character, Camera}
+                                raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+                                
+                                local result = workspace:Raycast(origin, direction, raycastParams)
+                                
+                                return result == nil or result.Instance:IsDescendantOf(target.Parent)
+                            end
+                            
+                            if not IsVisible(head) then
+                                canAim = false
+                            end
                         end
-                    end
-                end
-            end
-        end
-    end
+                        
+                        if canAim then
+                            shortest, closest = dist, head
+                        end
+                        
+                    end -- ĐÓNG if FOV_ENABLED
+                    
+                end -- ĐÓNG if onscreen
+                
+            end -- ĐÓNG if hum and head
+            
+        end -- ĐÓNG if plr ~= player
+        
+    end -- ĐÓNG for
+    
+    return closest
+end -- ĐÓNG function
 
 RunService.RenderStepped:Connect(function()
     if aimbot and FOV_ENABLED then
