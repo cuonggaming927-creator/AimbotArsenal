@@ -92,6 +92,7 @@ local Content = Instance.new("Frame", MainFrame)
 Content.Size = UDim2.new(1,0,1,-42)
 Content.Position = UDim2.new(0,0,0,42)
 Content.BackgroundColor3 = Color3.fromRGB(15,15,15)
+Content.BackgroundTransparency = 1
 Content.BorderSizePixel = 0
 -- THANH TAB (CAO 40px)
 local TabBar = Instance.new("Frame", Content)
