@@ -375,14 +375,13 @@ EspBtn.MouseButton1Click:Connect(function()
             local box = billboard:FindFirstChild("Box")
             if box then
                 local stroke = box:FindFirstChildOfClass("UIStroke")
-                                   if stroke then
-                        stroke.Transparency = ESP_ENABLED and 0 or 1
-                    end
+                if stroke then
+                    stroke.Transparency = ESP_ENABLED and 0 or 1
                 end
             end
-       end
-  end)
-
+        end
+    end
+end)
 --================ FOV UPDATE =================
 RunService.RenderStepped:Connect(function()
     if not Camera then return end
