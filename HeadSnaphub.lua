@@ -265,6 +265,8 @@ AimBtn.MouseButton1Click:Connect(function()
 end)
 
 --================ ESP FIX =================
+local ESP_Boxes = {}
+
 local function CreateESP_Player(plr)
     if plr == player then return end
 
@@ -324,6 +326,26 @@ local function CreateESP_Player(plr)
     ESP_Boxes[plr] = Billboard
     Billboard.Parent = game:GetService("CoreGui")
 end
+
+local function RemoveESP_Player(plr)
+    local billboard = ESP_Boxes[plr]
+    if billboard then
+        billboard:Destroy()
+        ESP_Boxes[plr] = nil
+    end
+end
+
+-- [[[ THÊM ĐOẠN NÀY - QUAN TRỌNG! ]]]
+-- Tạo ESP cho các player hiện tại
+for _, plr in ipairs(Players:GetPlayers()) do
+    if plr ~= player then
+        CreateESP_Player(plr)
+    end
+end
+
+-- Kết nối sự kiện
+Players.PlayerAdded:Connect(CreateESP_Player)
+Players.PlayerRemoving:Connect(RemoveESP_Player)
 
 RunService.RenderStepped:Connect(function()
     if not ESP_ENABLED then
