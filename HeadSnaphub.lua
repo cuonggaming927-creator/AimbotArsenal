@@ -244,9 +244,6 @@ end
             end
         end
     end
-    
-    return closest
-end
 
 RunService.RenderStepped:Connect(function()
     if aimbot and FOV_ENABLED then
