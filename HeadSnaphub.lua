@@ -45,49 +45,28 @@ FOVCorner.CornerRadius = UDim.new(1, 0)
 
 --================ MAIN UI =================
 local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0,260,0,330)
-MainFrame.Position = UDim2.new(0.5,-130,0.5,-165)
+MainFrame.Size = UDim2.new(0,260,0,380)  -- Tăng chiều cao lên 380 để chứa thêm TabBar
+MainFrame.Position = UDim2.new(0.5,-130,0.5,-190)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20,20,20)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,12)  -- Bo góc MainFrame
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,12)
 
--- Viền xanh cho MainFrame
+-- Viền xanh
 local MainStroke = Instance.new("UIStroke", MainFrame)
 MainStroke.Color = Color3.fromRGB(0, 100, 255)
 MainStroke.Thickness = 2.5
-MainStroke.Transparency = 0  -- Hiện khi bình thường
--- HEADER (BO GÓC)
+
+-- Header (giữ nguyên)
 local Header = Instance.new("Frame", MainFrame)
 Header.Size = UDim2.new(1,0,0,42)
 Header.BackgroundColor3 = Color3.fromRGB(30,30,30)
 Header.BorderSizePixel = 0
 Header.Active = true
+Header.Selectable = true
+Instance.new("UICorner", Header).CornerRadius = UDim.new(0,12)
 
--- BO GÓC NHẸ CHO HEADER (LUÔN CÓ)
-local HeaderCorner = Instance.new("UICorner", Header)
-HeaderCorner.CornerRadius = UDim.new(0, 12)  -- Bo góc 12px (nhẹ hơn MainFrame)
-
--- KHÔNG VIỀN (sẽ thêm khi thu gọn)
-local Title = Instance.new("TextLabel", Header)
-Title.Size = UDim2.new(1,-50,1,0)
-Title.Position = UDim2.new(0,12,0,0)
-Title.BackgroundTransparency = 1
-Title.Text = "HEAD SNAP HUB - ARSENAL"
-Title.TextColor3 = Color3.new(1,1,1)
-Title.Font = Enum.Font.SourceSansBold
-Title.TextSize = 18
-Title.TextXAlignment = Enum.TextXAlignment.Left
-
-local CollapseBtn = Instance.new("TextButton", Header)
-CollapseBtn.Size = UDim2.new(0,40,1,0)
-CollapseBtn.Position = UDim2.new(1,-42,0,0)
-CollapseBtn.BackgroundTransparency = 1
-CollapseBtn.Text = "−"
-CollapseBtn.TextColor3 = Color3.new(1,1,1)
-CollapseBtn.Font = Enum.Font.SourceSansBold
-CollapseBtn.TextSize = 22
-
+-- CONTENT CHÍNH (chứa TabBar và các phần khác)
 local Content = Instance.new("Frame", MainFrame)
 Content.Size = UDim2.new(1,0,1,-42)
 Content.Position = UDim2.new(0,0,0,42)
@@ -95,11 +74,29 @@ Content.BackgroundColor3 = Color3.fromRGB(15,15,15)
 Content.BorderSizePixel = 0
 Instance.new("UICorner", Content).CornerRadius = UDim.new(0,12)
 
+-- TAB BAR (màu đậm hơn)
+local TabBar = Instance.new("Frame", Content)
+TabBar.Size = UDim2.new(1, 0, 0, 160)  -- Cao 160px cho 4 nút
+TabBar.Position = UDim2.new(0, 0, 0, 0)
+TabBar.BackgroundColor3 = Color3.fromRGB(25, 25, 35)  -- Màu đậm
+TabBar.BorderSizePixel = 0
+local TabBarCorner = Instance.new("UICorner", TabBar)
+TabBarCorner.CornerRadius = UDim.new(0, 12)
+
+-- KHU VỰC FOV (phần dưới Content)
+local FOVArea = Instance.new("Frame", Content)
+FOVArea.Size = UDim2.new(1, 0, 0, 100)
+FOVArea.Position = UDim2.new(0, 0, 0, 170)
+FOVArea.BackgroundColor3 = Color3.fromRGB(15,15,15)
+FOVArea.BackgroundTransparency = 1
+FOVArea.BorderSizePixel = 0
+
+-- HÀM TẠO NÚT (Đặt trong TabBar)
 local function MakeButton(text, y)
-    local b = Instance.new("TextButton", Content)
-    b.Size = UDim2.new(1,-20,0,42)
+    local b = Instance.new("TextButton", TabBar)
+    b.Size = UDim2.new(1,-20,0,32)
     b.Position = UDim2.new(0,10,0,y)
-    b.BackgroundColor3 = Color3.fromRGB(45,45,45)
+    b.BackgroundColor3 = Color3.fromRGB(45,45,55)
     b.BorderSizePixel = 0
     b.Text = text
     b.TextColor3 = Color3.new(1,1,1)
@@ -109,32 +106,43 @@ local function MakeButton(text, y)
     return b
 end
 
-local AimBtn = MakeButton("Aimbot : OFF", 10)
-local EspBtn = MakeButton("ESP : ON", 62)
-local FovBtn = MakeButton("FOV : ON", 114)
-local WallCheckBtn = MakeButton("Wall Check : ON", 218)
+-- TẠO CÁC NÚT TRONG TAB BAR
+local AimBtn = MakeButton("Aimbot : OFF", 5)
+local EspBtn = MakeButton("ESP : ON", 42)
+local FovBtn = MakeButton("FOV : ON", 79)
+local WallCheckBtn = MakeButton("Wall Check : ON", 116)
 
---================ FOV +/- BUTTON =================
-local FovPlus = Instance.new("TextButton", Content)
+-- FOV +/- BUTTON (Đặt trong FOVArea)
+local FovPlus = Instance.new("TextButton", FOVArea)
 FovPlus.Size = UDim2.new(0.5,-15,0,36)
-FovPlus.Position = UDim2.new(0,10,0,166)
-FovPlus.BackgroundColor3 = Color3.fromRGB(55,55,55)
+FovPlus.Position = UDim2.new(0,10,0,10)
+FovPlus.BackgroundColor3 = Color3.fromRGB(55,55,65)
 FovPlus.Text = "+"
 FovPlus.TextColor3 = Color3.new(1,1,1)
 FovPlus.Font = Enum.Font.SourceSansBold
 FovPlus.TextSize = 22
 Instance.new("UICorner", FovPlus).CornerRadius = UDim.new(0,8)
 
-local FovMinus = Instance.new("TextButton", Content)
+local FovMinus = Instance.new("TextButton", FOVArea)
 FovMinus.Size = UDim2.new(0.5,-15,0,36)
-FovMinus.Position = UDim2.new(0.5,5,0,166)
-FovMinus.BackgroundColor3 = Color3.fromRGB(55,55,55)
+FovMinus.Position = UDim2.new(0.5,5,0,10)
+FovMinus.BackgroundColor3 = Color3.fromRGB(55,55,65)
 FovMinus.Text = "−"
 FovMinus.TextColor3 = Color3.new(1,1,1)
 FovMinus.Font = Enum.Font.SourceSansBold
 FovMinus.TextSize = 22
 Instance.new("UICorner", FovMinus).CornerRadius = UDim.new(0,8)
 
+-- LABEL FOV RADIUS
+local FOVRadiusLabel = Instance.new("TextLabel", FOVArea)
+FOVRadiusLabel.Size = UDim2.new(1, -20, 0, 25)
+FOVRadiusLabel.Position = UDim2.new(0, 10, 0, 55)
+FOVRadiusLabel.BackgroundColor3 = Color3.fromRGB(35,35,45)
+FOVRadiusLabel.Text = "FOV Radius: 300"
+FOVRadiusLabel.TextColor3 = Color3.new(1,1,1)
+FOVRadiusLabel.Font = Enum.Font.SourceSans
+FOVRadiusLabel.TextSize = 14
+Instance.new("UICorner", FOVRadiusLabel).CornerRadius = UDim.new(0,4)
 --================ BUTTON EVENTS =================
 FovBtn.MouseButton1Click:Connect(function()
     FOV_ENABLED = not FOV_ENABLED
