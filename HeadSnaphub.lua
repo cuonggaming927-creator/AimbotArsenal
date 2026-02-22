@@ -268,29 +268,46 @@ end)
 local function CreateESP_Player(plr)
     if plr == player then return end
 
+    -- Đợi character load
+    local char = plr.Character
+    if not char then return end
+    
+    -- Lấy HumanoidRootPart để đo kích thước
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    
+    -- TÍNH KÍCH THƯỚC BOX THEO STUD
+    local boxWidth = hrp.Size.X + 2      -- Rộng hơn thân 2 studs
+    local boxHeight = hrp.Size.Y * 2.5   -- Cao gấp 2.5 lần thân (đủ từ chân đến đầu)
+
+    -- TẠO BILLBOARDGUI (PHẦN QUAN TRỌNG)
     local Billboard = Instance.new("BillboardGui")
     Billboard.Name = "ESP_"..plr.Name
     Billboard.AlwaysOnTop = true
     Billboard.LightInfluence = 0
-    Billboard.Size = UDim2.new(0, 35, 0, 70)
-    Billboard.StudsOffset = Vector3.new(0, 2, 0)
-    Billboard.Adornee = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") or nil
+    Billboard.Size = UDim2.fromScale(boxWidth, boxHeight)  -- DÙNG fromScale - CHUẨN
+    Billboard.StudsOffset = Vector3.new(0, hrp.Size.Y * 0.5, 0)  -- Căn giữa
+    Billboard.Adornee = hrp
 
+    -- TẠO FRAME (BOX)
     local Box = Instance.new("Frame", Billboard)
     Box.Name = "Box"
     Box.BackgroundColor3 = ESP_COLOR
     Box.BackgroundTransparency = 1
     Box.BorderSizePixel = 0
-    Box.Size = UDim2.new(1, 0, 1, 0)
+    Box.Size = UDim2.new(1, 0, 1, 0)  -- Full size của Billboard
 
+    -- TẠO VIỀN
     local Stroke = Instance.new("UIStroke", Box)
     Stroke.Color = ESP_COLOR
     Stroke.Thickness = ESP_THICKNESS
     Stroke.Transparency = 0
 
+    -- BO GÓC
     local Corner = Instance.new("UICorner", Box)
     Corner.CornerRadius = UDim.new(0, 4)
 
+    -- XỬ LÝ KHI NHÂN VẬT ĐỔI
     local function onCharacterAdded(char)
         task.wait(0.1)
         local hrp = char:FindFirstChild("HumanoidRootPart")
@@ -308,25 +325,9 @@ local function CreateESP_Player(plr)
     Billboard.Parent = game:GetService("CoreGui")
 end
 
-local function RemoveESP_Player(plr)
-    local billboard = ESP_Boxes[plr]
-    if billboard then
-        billboard:Destroy()
-        ESP_Boxes[plr] = nil
-    end
-end
-
-for _, plr in ipairs(Players:GetPlayers()) do
-    if plr ~= player then
-        CreateESP_Player(plr)
-    end
-end
-
-Players.PlayerAdded:Connect(CreateESP_Player)
-Players.PlayerRemoving:Connect(RemoveESP_Player)
-
 RunService.RenderStepped:Connect(function()
     if not ESP_ENABLED then
+        -- Ẩn tất cả nếu tắt ESP
         for _, billboard in pairs(ESP_Boxes) do
             if billboard then
                 local box = billboard:FindFirstChild("Box")
@@ -347,11 +348,9 @@ RunService.RenderStepped:Connect(function()
             local hum = plr.Character:FindFirstChild("Humanoid")
 
             if hrp and hum and hum.Health > 0 then
-                local dist = (Camera.CFrame.Position - hrp.Position).Magnitude
-                local sizeMultiplier = math.clamp(2000 / dist, 0.5, 3)
-
-                billboard.Size = UDim2.new(0, 28 * sizeMultiplier, 0, 56 * sizeMultiplier)
-
+                -- KHÔNG CẦN CHỈNH SIZE Ở ĐÂY NỮA!
+                -- Billboard đã tự động scale theo studs
+                
                 local box = billboard:FindFirstChild("Box")
                 if box then
                     local stroke = box:FindFirstChildOfClass("UIStroke")
