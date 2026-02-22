@@ -272,7 +272,7 @@ local function CreateESP_Player(plr)
     Billboard.Name = "ESP_"..plr.Name
     Billboard.AlwaysOnTop = true
     Billboard.LightInfluence = 0
-    Billboard.Size = UDim2.new(0, 50, 0, 100)
+    Billboard.Size = UDim2.new(0, 30, 0, 60)
     Billboard.StudsOffset = Vector3.new(0, 2, 0)
     Billboard.Adornee = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") or nil
 
