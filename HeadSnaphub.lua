@@ -51,8 +51,12 @@ MainFrame.BackgroundColor3 = Color3.fromRGB(20,20,20)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,12)
-Instance.new("UIStroke", MainFrame).Color = Color3.fromRGB(60,60,60)
 
+-- VIỀN XANH ĐẬM CHO TOÀN BỘ MENU
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(0, 100, 255)  -- Xanh đậm
+MainStroke.Thickness = 2.5                      -- Độ dày viền
+-- TOP BAR
 local Header = Instance.new("Frame", MainFrame)
 Header.Size = UDim2.new(1,0,0,42)
 Header.BackgroundColor3 = Color3.fromRGB(30,30,30)
