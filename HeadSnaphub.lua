@@ -50,27 +50,25 @@ MainFrame.Position = UDim2.new(0.5,-130,0.5,-165)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20,20,20)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,12)
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,12)  -- Bo góc MainFrame
 
--- VIỀN XANH CHO MAINFRAME
+-- Viền xanh cho MainFrame
 local MainStroke = Instance.new("UIStroke", MainFrame)
 MainStroke.Color = Color3.fromRGB(0, 100, 255)
 MainStroke.Thickness = 2.5
-
--- HEADER (KHÔNG BO GÓC)
+MainStroke.Transparency = 0  -- Hiện khi bình thường
+-- HEADER (BO GÓC)
 local Header = Instance.new("Frame", MainFrame)
 Header.Size = UDim2.new(1,0,0,42)
 Header.BackgroundColor3 = Color3.fromRGB(30,30,30)
 Header.BorderSizePixel = 0
 Header.Active = true
-Header.Selectable = true
--- KHÔNG THÊM UICorner VÀO ĐÂY!
 
--- VIỀN XANH CHO HEADER
-local HeaderStroke = Instance.new("UIStroke", Header)
-HeaderStroke.Color = Color3.fromRGB(0, 100, 255)
-HeaderStroke.Thickness = 2.5
+-- BO GÓC NHẸ CHO HEADER (LUÔN CÓ)
+local HeaderCorner = Instance.new("UICorner", Header)
+HeaderCorner.CornerRadius = UDim.new(0, 8)  -- Bo góc 8px (nhẹ hơn MainFrame)
 
+-- KHÔNG VIỀN (sẽ thêm khi thu gọn)
 local Title = Instance.new("TextLabel", Header)
 Title.Size = UDim2.new(1,-50,1,0)
 Title.Position = UDim2.new(0,12,0,0)
@@ -198,9 +196,37 @@ CollapseBtn.MouseButton1Click:Connect(function()
     collapsed = not collapsed
     Content.Visible = not collapsed
     CollapseBtn.Text = collapsed and "+" or "−"
-    TweenService:Create(MainFrame, TweenInfo.new(0.25), {
-        Size = collapsed and UDim2.new(0,260,0,42) or UDim2.new(0,260,0,330)
-    }):Play()
+    
+    if collapsed then
+        -- THU GỌN: Ẩn viền MainFrame, thêm viền cho Header
+        MainStroke.Transparency = 1
+        
+        -- Thêm viền xanh cho Header (nếu chưa có)
+        if not Header:FindFirstChild("HeaderStroke") then
+            local HeaderStroke = Instance.new("UIStroke", Header)
+            HeaderStroke.Name = "HeaderStroke"
+            HeaderStroke.Color = Color3.fromRGB(0, 100, 255)
+            HeaderStroke.Thickness = 2.5
+        else
+            Header.HeaderStroke.Transparency = 0
+        end
+        
+        TweenService:Create(MainFrame, TweenInfo.new(0.25), {
+            Size = UDim2.new(0,260,0,42)
+        }):Play()
+        
+    else
+        -- MỞ RỘNG: Hiện viền MainFrame, xóa viền Header
+        MainStroke.Transparency = 0
+        
+        if Header:FindFirstChild("HeaderStroke") then
+            Header.HeaderStroke.Transparency = 1
+        end
+        
+        TweenService:Create(MainFrame, TweenInfo.new(0.25), {
+            Size = UDim2.new(0,260,0,330)
+        }):Play()
+    end
 end)
 --================ AIMBOT =================
 local function GetClosestTarget()
