@@ -60,12 +60,6 @@ MainStroke.Thickness = 2.5                      -- Độ dày viền
 local Header = Instance.new("Frame", MainFrame)
 Header.Size = UDim2.new(1,0,0,42)
 Header.BackgroundColor3 = Color3.fromRGB(30,30,30)
--- THÊM VIỀN XANH ĐẬM CHO HEADER
-local HeaderStroke = Instance.new("UIStroke", Header)
-HeaderStroke.Color = Color3.fromRGB(0, 100, 255)  -- Xanh đậm
-HeaderStroke.Thickness = 2.5                      -- Độ dày viền
-HeaderStroke.Transparency = 0
-
 Header.BorderSizePixel = 0
 Header.Active = true
 Instance.new("UICorner", Header).CornerRadius = UDim.new(0,12)
