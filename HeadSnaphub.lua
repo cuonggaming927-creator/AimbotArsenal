@@ -52,19 +52,24 @@ MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,12)
 
--- VIỀN XANH ĐẬM CHO TOÀN BỘ MENU
+-- VIỀN XANH CHO MAINFRAME
 local MainStroke = Instance.new("UIStroke", MainFrame)
-MainStroke.Color = Color3.fromRGB(0, 100, 255)  -- Xanh đậm
-MainStroke.Thickness = 2.5                      -- Độ dày viền
--- TOP BAR
+MainStroke.Color = Color3.fromRGB(0, 100, 255)
+MainStroke.Thickness = 2.5
+
+-- HEADER (KHÔNG BO GÓC)
 local Header = Instance.new("Frame", MainFrame)
 Header.Size = UDim2.new(1,0,0,42)
 Header.BackgroundColor3 = Color3.fromRGB(30,30,30)
 Header.BorderSizePixel = 0
 Header.Active = true
-Instance.new("UICorner", Header).CornerRadius = UDim.new(0,12)
-Header.Active = true
 Header.Selectable = true
+-- KHÔNG THÊM UICorner VÀO ĐÂY!
+
+-- VIỀN XANH CHO HEADER
+local HeaderStroke = Instance.new("UIStroke", Header)
+HeaderStroke.Color = Color3.fromRGB(0, 100, 255)
+HeaderStroke.Thickness = 2.5
 
 local Title = Instance.new("TextLabel", Header)
 Title.Size = UDim2.new(1,-50,1,0)
@@ -197,7 +202,6 @@ CollapseBtn.MouseButton1Click:Connect(function()
         Size = collapsed and UDim2.new(0,260,0,42) or UDim2.new(0,260,0,330)
     }):Play()
 end)
-
 --================ AIMBOT =================
 local function GetClosestTarget()
     local closest, shortest = nil, FOV_RADIUS
