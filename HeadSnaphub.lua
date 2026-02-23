@@ -56,26 +56,26 @@ Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,16)  -- Bo góc Ma
 local MainStroke = Instance.new("UIStroke", MainFrame)
 MainStroke.Color = Color3.fromRGB(0, 80, 200)        -- Xanh đậm
 MainStroke.Thickness = 2.5                           -- Mỏng 2.5px
-MainStroke.Transparency = 0.2                         -- Hơi glow nhẹ
+MainStroke.Transparency = 0.6                         -- Hơi glow nhẹ
 MainStroke.LineJoinMode = Enum.LineJoinMode.Round     -- Bo góc theo frame
 
 -- Tạo gradient để ánh trắng chạy trong viền
 local StrokeGradient = Instance.new("UIGradient", MainStroke)
 StrokeGradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 80, 200)),     -- Xanh đậm
-    ColorSequenceKeypoint.new(0.3, Color3.fromRGB(100, 150, 255)), -- Xanh sáng
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 180, 255)),     -- Xanh sáng
+    ColorSequenceKeypoint.new(0.2, Color3.fromRGB(150, 220, 255)), -- Xanh rất sáng
     ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)), -- Trắng sáng nhất
-    ColorSequenceKeypoint.new(0.7, Color3.fromRGB(100, 150, 255)), -- Xanh sáng
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 80, 200))      -- Xanh đậm
+    ColorSequenceKeypoint.new(0.8, Color3.fromRGB(150, 220, 255)), -- Xanh rất sáng
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 180, 255))      -- Xanh sáng
 })
 
 -- Điều chỉnh độ trong suốt của gradient
 StrokeGradient.Transparency = NumberSequence.new({
-    NumberSequenceKeypoint.new(0, 0.2),
-    NumberSequenceKeypoint.new(0.3, 0.1),
-    NumberSequenceKeypoint.new(0.5, 0),     -- Trong suốt nhất ở giữa
-    NumberSequenceKeypoint.new(0.7, 0.1),
-    NumberSequenceKeypoint.new(1, 0.2)
+     NumberSequenceKeypoint.new(0, 0),
+    NumberSequenceKeypoint.new(0.2, 0),
+    NumberSequenceKeypoint.new(0.5, 0),
+    NumberSequenceKeypoint.new(0.8, 0),
+    NumberSequenceKeypoint.new(1, 0)
 })
 
 -- Bắt đầu từ góc 0 độ
