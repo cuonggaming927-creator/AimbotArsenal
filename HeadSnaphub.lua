@@ -52,59 +52,23 @@ MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Visible = false
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,16)  -- Bo góc MainFrame
--- ===== LỚP 1: VIỀN NỀN XANH (DÀY NHẤT, MỜ NHẤT) - TẠO GLOW NỀN =====
-local GlowBase = Instance.new("UIStroke", MainFrame)
-GlowBase.Color = Color3.fromRGB(0, 150, 255)        -- Xanh sáng
-GlowBase.Thickness = 10                               -- Dày 10px
-GlowBase.Transparency = 0.8                            -- Rất mờ (tạo glow nền)
-GlowBase.LineJoinMode = Enum.LineJoinMode.Round
-
--- ===== LỚP 2: VIỀN GLOW PHỤ (XANH, DÀY, MỜ) - TẠO GLOW LAN TỎA =====
-local GlowLayer = Instance.new("UIStroke", MainFrame)
-GlowLayer.Color = Color3.fromRGB(0, 150, 255)        -- Xanh sáng
-GlowLayer.Thickness = 6                                -- Dày 6px
-GlowLayer.Transparency = 0.5                            -- Mờ vừa
-GlowLayer.LineJoinMode = Enum.LineJoinMode.Round
-
--- ===== LỚP 3: VIỀN CHÍNH + GRADIENT "CHẠY CHẠY" =====
+-- ===== VIỀN XANH + GRADIENT TRẮNG CHẠY =====
 local MainStroke = Instance.new("UIStroke", MainFrame)
-MainStroke.Color = Color3.fromRGB(0, 100, 255)        -- Xanh sáng
-MainStroke.Thickness = 4                                -- Dày 4px
-MainStroke.Transparency = 0                              -- Không mờ
+MainStroke.Color = Color3.fromRGB(0, 150, 255)
+MainStroke.Thickness = 2.5
+MainStroke.Transparency = 0
 MainStroke.LineJoinMode = Enum.LineJoinMode.Round
 
--- GRADIENT CHO VIỀN CHÍNH (PHẦN "CHẠY CHẠY")
 local StrokeGradient = Instance.new("UIGradient", MainStroke)
 StrokeGradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 150, 255)),     -- Xanh
-    ColorSequenceKeypoint.new(0.2, Color3.fromRGB(0, 150, 255)),   -- Giữ xanh
-    ColorSequenceKeypoint.new(0.3, Color3.fromRGB(255, 255, 255)), -- TRẮNG SÁNG BẮT ĐẦU
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)), -- TRẮNG SÁNG GIỮA
-    ColorSequenceKeypoint.new(0.7, Color3.fromRGB(255, 255, 255)), -- TRẮNG SÁNG KẾT THÚC
-    ColorSequenceKeypoint.new(0.8, Color3.fromRGB(0, 150, 255)),   -- Xanh trở lại
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 150, 255))      -- Xanh kết thúc
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 150, 255)),
+    ColorSequenceKeypoint.new(0.3, Color3.fromRGB(0, 150, 255)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+    ColorSequenceKeypoint.new(0.7, Color3.fromRGB(0, 150, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 150, 255))
 })
-
--- KHÔNG TRONG SUỐT CHO GRADIENT
-StrokeGradient.Transparency = NumberSequence.new({
-    NumberSequenceKeypoint.new(0, 0),
-    NumberSequenceKeypoint.new(0.2, 0),
-    NumberSequenceKeypoint.new(0.3, 0),
-    NumberSequenceKeypoint.new(0.5, 0),
-    NumberSequenceKeypoint.new(0.7, 0),
-    NumberSequenceKeypoint.new(0.8, 0),
-    NumberSequenceKeypoint.new(1, 0)
-})
-
+StrokeGradient.Transparency = NumberSequence.new(0)
 StrokeGradient.Rotation = 45
-
--- ===== LỚP 4: VIỀN TRẮNG MỎNG (TẠO ĐIỂM NHẤN) =====
-local WhiteStroke = Instance.new("UIStroke", MainFrame)
-WhiteStroke.Color = Color3.fromRGB(255, 255, 255)     -- Trắng
-WhiteStroke.Thickness = 2                               -- Mỏng 2px
-WhiteStroke.Transparency = 0.5                           -- Mờ nhẹ
-WhiteStroke.LineJoinMode = Enum.LineJoinMode.Round
-
 -- HEADER (BO GÓC)
 local Header = Instance.new("Frame", MainFrame)
 Header.Size = UDim2.new(1,0,0,42)
