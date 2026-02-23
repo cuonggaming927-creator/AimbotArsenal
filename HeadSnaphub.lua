@@ -96,7 +96,7 @@ StrokeGradient.Transparency = NumberSequence.new({
     NumberSequenceKeypoint.new(1, 0)
 })
 
-StrokeGradient.Rotation = 0
+StrokeGradient.Rotation = 45
 
 -- ===== LỚP 4: VIỀN TRẮNG MỎNG (TẠO ĐIỂM NHẤN) =====
 local WhiteStroke = Instance.new("UIStroke", MainFrame)
