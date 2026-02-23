@@ -660,14 +660,36 @@ task.spawn(function()
     
     LoadingGui:Destroy()
     
-    -- ===== HIỆU ỨNG FADE IN CHO TOÀN BỘ MENU =====
-   MainFrame.Visible = true
-    Header.Visible = true
-    Content.Visible = true
-    TabBar.Visible = true
-    MainContainer.Visible = true
-end)
--- Cách 2: Chạy nhanh hơn (nếu muốn)
+    -- ===== FADE IN MENU =====
+-- Set transparency ban đầu
+MainFrame.BackgroundTransparency = 1
+Header.BackgroundTransparency = 1
+TabBar.BackgroundTransparency = 1
+MainContainer.BackgroundTransparency = 1
+
+-- Bật visible
+MainFrame.Visible = true
+Header.Visible = true
+Content.Visible = true
+TabBar.Visible = true
+MainContainer.Visible = true
+
+-- Fade in mượt mà
+for i = 1, 0, -0.05 do
+    MainFrame.BackgroundTransparency = i
+    Header.BackgroundTransparency = i
+    TabBar.BackgroundTransparency = i
+    MainContainer.BackgroundTransparency = i
+    task.wait(0.03)
+end
+
+-- Reset transparency về đúng
+Header.BackgroundTransparency = 0
+TabBar.BackgroundTransparency = 0
+MainContainer.BackgroundTransparency = 0
+-- Content giữ transparency = 1 (vì nó trong suốt)
+
+        -- Cách 2: Chạy nhanh hơn (nếu muốn)
 -- task.spawn(function()
 --     while true do
 --         TweenService:Create(StrokeGradient, TweenInfo.new(5, Enum.EasingStyle.Linear), {
