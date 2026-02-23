@@ -688,16 +688,7 @@ Header.BackgroundTransparency = 0
 TabBar.BackgroundTransparency = 0
 MainContainer.BackgroundTransparency = 0
 -- Content giữ transparency = 1 (vì nó trong suốt)
-
-        -- Cách 2: Chạy nhanh hơn (nếu muốn)
--- task.spawn(function()
---     while true do
---         TweenService:Create(StrokeGradient, TweenInfo.new(5, Enum.EasingStyle.Linear), {
---             Rotation = StrokeGradient.Rotation + 360
---         }):Play()
---         task.wait(5)
---     end
--- end)
+end)
 --========================================
 -- END OF SCRIPT - NO ERRORS
 --========================================
