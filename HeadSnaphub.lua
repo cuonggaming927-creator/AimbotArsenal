@@ -27,7 +27,90 @@ local ESP_Boxes = {}
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = player:WaitForChild("PlayerGui")
+--================ INTRO LOADING =================
+local LoadingGui = Instance.new("ScreenGui")
+LoadingGui.Name = "LoadingGui"
+LoadingGui.ResetOnSpawn = false
+LoadingGui.Parent = player:WaitForChild("PlayerGui")
 
+-- Bảng nền loading
+local LoadingFrame = Instance.new("Frame", LoadingGui)
+LoadingFrame.Size = UDim2.new(0, 300, 0, 200)
+LoadingFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+LoadingFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+LoadingFrame.BackgroundTransparency = 0.2
+LoadingFrame.BorderSizePixel = 0
+LoadingFrame.Active = true
+
+-- Bo góc và viền cho loading frame
+local LoadingCorner = Instance.new("UICorner", LoadingFrame)
+LoadingCorner.CornerRadius = UDim.new(0, 16)
+
+local LoadingStroke = Instance.new("UIStroke", LoadingFrame)
+LoadingStroke.Color = Color3.fromRGB(0, 150, 255)
+LoadingStroke.Thickness = 2.5
+LoadingStroke.Transparency = 0
+
+-- Tiêu đề "HEAD SNAP HUB"
+local LoadingTitle = Instance.new("TextLabel", LoadingFrame)
+LoadingTitle.Size = UDim2.new(1, 0, 0, 40)
+LoadingTitle.Position = UDim2.new(0, 0, 0, 20)
+LoadingTitle.BackgroundTransparency = 1
+LoadingTitle.Text = "HEAD SNAP HUB"
+LoadingTitle.TextColor3 = Color3.fromRGB(0, 150, 255)
+LoadingTitle.Font = Enum.Font.GothamBold
+LoadingTitle.TextSize = 24
+
+-- Dòng "loading..." với dấu ... chạy
+local LoadingText = Instance.new("TextLabel", LoadingFrame)
+LoadingText.Size = UDim2.new(1, 0, 0, 30)
+LoadingText.Position = UDim2.new(0, 0, 0, 80)
+LoadingText.BackgroundTransparency = 1
+LoadingText.Text = "loading"
+LoadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
+LoadingText.Font = Enum.Font.Gotham
+LoadingText.TextSize = 18
+
+-- Dòng cảm ơn
+local ThankYouText = Instance.new("TextLabel", LoadingFrame)
+ThankYouText.Size = UDim2.new(1, 0, 0, 30)
+ThankYouText.Position = UDim2.new(0, 0, 0, 120)
+ThankYouText.BackgroundTransparency = 1
+ThankYouText.Text = "thank you for using Head Snap Hub"
+ThankYouText.TextColor3 = Color3.fromRGB(200, 200, 200)
+ThankYouText.Font = Enum.Font.Gotham
+ThankYouText.TextSize = 14
+
+-- ===== HIỆU ỨNG CHẠY DẤU ... =====
+task.spawn(function()
+    local dotCount = 0
+    while LoadingGui and LoadingGui.Parent do
+        dotCount = dotCount + 1
+        if dotCount > 3 then dotCount = 1 end
+        
+        local dots = string.rep(".", dotCount)
+        LoadingText.Text = "loading" .. dots
+        
+        task.wait(0.5)
+    end
+end)
+
+-- ===== TỰ ĐỘNG TẮT SAU 4 GIÂY =====
+task.spawn(function()
+    task.wait(4)
+    
+    -- Hiệu ứng mờ dần
+    for i = 0, 1, 0.1 do
+        LoadingFrame.BackgroundTransparency = i
+        LoadingTitle.TextTransparency = i
+        LoadingText.TextTransparency = i
+        ThankYouText.TextTransparency = i
+        LoadingStroke.Transparency = i
+        task.wait(0.03)
+    end
+    
+    LoadingGui:Destroy()
+end)
 --================ FOV GUI =================
 local FOVFrame = Instance.new("Frame", ScreenGui)
 FOVFrame.Size = UDim2.fromOffset(FOV_RADIUS*2, FOV_RADIUS*2)
