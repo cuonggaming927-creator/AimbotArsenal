@@ -660,34 +660,11 @@ task.spawn(function()
     
     LoadingGui:Destroy()
     
-    -- ===== FADE IN MENU =====
--- Set transparency ban đầu
-MainFrame.BackgroundTransparency = 1
-Header.BackgroundTransparency = 1
-TabBar.BackgroundTransparency = 1
-MainContainer.BackgroundTransparency = 1
-
--- Bật visible
-MainFrame.Visible = true
-Header.Visible = true
-Content.Visible = true
-TabBar.Visible = true
-MainContainer.Visible = true
-
--- Fade in mượt mà
-for i = 1, 0, -0.05 do
-    MainFrame.BackgroundTransparency = i
-    Header.BackgroundTransparency = i
-    TabBar.BackgroundTransparency = i
-    MainContainer.BackgroundTransparency = i
-    task.wait(0.03)
-end
-
--- Reset transparency về đúng
-Header.BackgroundTransparency = 0
-TabBar.BackgroundTransparency = 0
-MainContainer.BackgroundTransparency = 0
--- Content giữ transparency = 1 (vì nó trong suốt)
+   MainFrame.Visible = true
+    Header.Visible = true
+    Content.Visible = true
+    TabBar.Visible = true
+    MainContainer.Visible = true
 end)
 --========================================
 -- END OF SCRIPT - NO ERRORS
