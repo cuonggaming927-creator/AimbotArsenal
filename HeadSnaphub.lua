@@ -50,7 +50,7 @@ MainFrame.Position = UDim2.new(0.5,-130,0.5,-165)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20,20,20)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,20)  -- Bo góc MainFrame
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,16)  -- Bo góc MainFrame
 -- ===== VIỀN GLOW MÀU XANH ĐẬM =====
 -- Tạo viền chính
 local MainStroke = Instance.new("UIStroke", MainFrame)
@@ -90,7 +90,7 @@ Header.Active = true
 
 -- BO GÓC NHẸ CHO HEADER (LUÔN CÓ)
 local HeaderCorner = Instance.new("UICorner", Header)
-HeaderCorner.CornerRadius = UDim.new(0, 8)  -- Bo góc 8px (nhẹ hơn MainFrame)
+HeaderCorner.CornerRadius = UDim.new(0, 12)  -- Bo góc 8px (nhẹ hơn MainFrame)
 
 -- KHÔNG VIỀN (sẽ thêm khi thu gọn)
 local Title = Instance.new("TextLabel", Header)
@@ -127,7 +127,7 @@ TabBar.BorderSizePixel = 0
 
 -- Bo góc trên cho TabBar
 local TabBarCorner = Instance.new("UICorner", TabBar)
-TabBarCorner.CornerRadius = UDim.new(0, 12)
+TabBarCorner.CornerRadius = UDim.new(0, 16)
 
 -- TẠO NÚT TAB "MAIN"
 local MainTab = Instance.new("TextButton", TabBar)
@@ -150,7 +150,7 @@ MainContainer.BackgroundColor3 = Color3.fromRGB(15,15,15)  -- Cùng màu với C
 MainContainer.BackgroundTransparency = 0
 MainContainer.BorderSizePixel = 0
 local MainContainerCorner = Instance.new("UICorner", MainContainer)
-MainContainerCorner.CornerRadius = UDim.new(0, 20)  -- Bo góc 12px
+MainContainerCorner.CornerRadius = UDim.new(0, 16)  -- Bo góc 12px
 
 local function MakeButton(text, y)
     local b = Instance.new("TextButton", MainContainer)
