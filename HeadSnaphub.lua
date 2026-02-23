@@ -67,7 +67,7 @@ GlowLayer.LineJoinMode = Enum.LineJoinMode.Round
 
 -- ===== LỚP 3: VIỀN CHÍNH + GRADIENT "CHẠY CHẠY" =====
 local MainStroke = Instance.new("UIStroke", MainFrame)
-MainStroke.Color = Color3.fromRGB(0, 150, 255)        -- Xanh sáng
+MainStroke.Color = Color3.fromRGB(0, 100, 255)        -- Xanh sáng
 MainStroke.Thickness = 4                                -- Dày 4px
 MainStroke.Transparency = 0                              -- Không mờ
 MainStroke.LineJoinMode = Enum.LineJoinMode.Round
