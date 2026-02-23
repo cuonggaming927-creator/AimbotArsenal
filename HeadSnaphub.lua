@@ -62,12 +62,12 @@ MainStroke.LineJoinMode = Enum.LineJoinMode.Round     -- Bo góc theo frame
 -- Tạo gradient để ánh trắng chạy trong viền
 local StrokeGradient = Instance.new("UIGradient", MainStroke)
 StrokeGradient.Color = ColorSequence.new({
-     ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 150, 255)),     -- Xanh da trời
-    ColorSequenceKeypoint.new(0.2, Color3.fromRGB(100, 200, 255)), -- Xanh sáng
-    ColorSequenceKeypoint.new(0.4, Color3.fromRGB(200, 230, 255)), -- Xanh rất sáng
-    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(255, 255, 255)), -- Trắng tinh
-    ColorSequenceKeypoint.new(0.8, Color3.fromRGB(200, 230, 255)), -- Xanh rất sáng
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 150, 255))      -- Xanh da trời
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 150, 255)),     -- Xanh sáng hơn
+    ColorSequenceKeypoint.new(0.2, Color3.fromRGB(100, 200, 255)), -- Xanh rất sáng
+    ColorSequenceKeypoint.new(0.4, Color3.fromRGB(255, 255, 255)), -- Trắng tinh
+    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(255, 255, 255)), -- Trắng tinh (giữ lâu hơn)
+    ColorSequenceKeypoint.new(0.8, Color3.fromRGB(100, 200, 255)), -- Xanh rất sáng
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 150, 255))      -- Xanh sáng
 })
 
 -- Điều chỉnh độ trong suốt của gradient
