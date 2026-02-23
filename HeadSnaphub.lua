@@ -150,7 +150,7 @@ MainContainer.BackgroundColor3 = Color3.fromRGB(15,15,15)  -- Cùng màu với C
 MainContainer.BackgroundTransparency = 0
 MainContainer.BorderSizePixel = 0
 local MainContainerCorner = Instance.new("UICorner", MainContainer)
-MainContainerCorner.CornerRadius = UDim.new(0, 12)  -- Bo góc 12px
+MainContainerCorner.CornerRadius = UDim.new(0, 20)  -- Bo góc 12px
 
 local function MakeButton(text, y)
     local b = Instance.new("TextButton", MainContainer)
