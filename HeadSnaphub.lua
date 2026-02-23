@@ -51,6 +51,35 @@ MainFrame.BackgroundColor3 = Color3.fromRGB(20,20,20)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,20)  -- Bo góc MainFrame
+-- ===== VIỀN GLOW MÀU XANH ĐẬM =====
+-- Tạo viền chính
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(0, 80, 200)        -- Xanh đậm
+MainStroke.Thickness = 2.5                           -- Mỏng 2.5px
+MainStroke.Transparency = 0.2                         -- Hơi glow nhẹ
+MainStroke.LineJoinMode = Enum.LineJoinMode.Round     -- Bo góc theo frame
+
+-- Tạo gradient để ánh trắng chạy trong viền
+local StrokeGradient = Instance.new("UIGradient", MainStroke)
+StrokeGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 80, 200)),     -- Xanh đậm
+    ColorSequenceKeypoint.new(0.3, Color3.fromRGB(100, 150, 255)), -- Xanh sáng
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)), -- Trắng sáng nhất
+    ColorSequenceKeypoint.new(0.7, Color3.fromRGB(100, 150, 255)), -- Xanh sáng
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 80, 200))      -- Xanh đậm
+})
+
+-- Điều chỉnh độ trong suốt của gradient
+StrokeGradient.Transparency = NumberSequence.new({
+    NumberSequenceKeypoint.new(0, 0.2),
+    NumberSequenceKeypoint.new(0.3, 0.1),
+    NumberSequenceKeypoint.new(0.5, 0),     -- Trong suốt nhất ở giữa
+    NumberSequenceKeypoint.new(0.7, 0.1),
+    NumberSequenceKeypoint.new(1, 0.2)
+})
+
+-- Bắt đầu từ góc 0 độ
+StrokeGradient.Rotation = 0
 
 -- HEADER (BO GÓC)
 local Header = Instance.new("Frame", MainFrame)
@@ -512,7 +541,27 @@ end)
 FovMinus.MouseButton1Click:Connect(function()
     FOV_RADIUS = math.clamp(FOV_RADIUS - FOV_STEP, FOV_MIN, FOV_MAX)
 end)
+-- ===== HIỆU ỨNG GLOW CHẠY VÔ TẬN =====
+-- Cách 1: Chạy mượt bằng TweenService
+task.spawn(function()
+    while true do
+        -- Xoay gradient 360 độ trong 8 giây
+        TweenService:Create(StrokeGradient, TweenInfo.new(8, Enum.EasingStyle.Linear), {
+            Rotation = StrokeGradient.Rotation + 360
+        }):Play()
+        task.wait(8)  -- Đợi 8 giây rồi lặp lại
+    end
+end)
 
+-- Cách 2: Chạy nhanh hơn (nếu muốn)
+-- task.spawn(function()
+--     while true do
+--         TweenService:Create(StrokeGradient, TweenInfo.new(5, Enum.EasingStyle.Linear), {
+--             Rotation = StrokeGradient.Rotation + 360
+--         }):Play()
+--         task.wait(5)
+--     end
+-- end)
 --========================================
 -- END OF SCRIPT - NO ERRORS
 --========================================
