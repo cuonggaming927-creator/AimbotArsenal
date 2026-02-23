@@ -51,41 +51,58 @@ MainFrame.BackgroundColor3 = Color3.fromRGB(20,20,20)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,16)  -- Bo góc MainFrame
--- ===== VIỀN GLOW MÀU XANH ĐẬM =====
--- Tạo viền chính
-local MainStroke = Instance.new("UIStroke", MainFrame)
-MainStroke.Color = Color3.fromRGB(0, 80, 200)        -- Xanh đậm
-MainStroke.Thickness = 2.5                           -- Mỏng 2.5px
-MainStroke.Transparency = 0                       -- Hơi glow nhẹ
-MainStroke.LineJoinMode = Enum.LineJoinMode.Round     -- Bo góc theo frame
+-- ===== LỚP 1: VIỀN NỀN XANH (DÀY NHẤT, MỜ NHẤT) - TẠO GLOW NỀN =====
+local GlowBase = Instance.new("UIStroke", MainFrame)
+GlowBase.Color = Color3.fromRGB(0, 150, 255)        -- Xanh sáng
+GlowBase.Thickness = 10                               -- Dày 10px
+GlowBase.Transparency = 0.8                            -- Rất mờ (tạo glow nền)
+GlowBase.LineJoinMode = Enum.LineJoinMode.Round
 
--- Tạo gradient để ánh trắng chạy trong viền
+-- ===== LỚP 2: VIỀN GLOW PHỤ (XANH, DÀY, MỜ) - TẠO GLOW LAN TỎA =====
+local GlowLayer = Instance.new("UIStroke", MainFrame)
+GlowLayer.Color = Color3.fromRGB(0, 150, 255)        -- Xanh sáng
+GlowLayer.Thickness = 6                                -- Dày 6px
+GlowLayer.Transparency = 0.5                            -- Mờ vừa
+GlowLayer.LineJoinMode = Enum.LineJoinMode.Round
+
+-- ===== LỚP 3: VIỀN CHÍNH + GRADIENT "CHẠY CHẠY" =====
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(0, 150, 255)        -- Xanh sáng
+MainStroke.Thickness = 4                                -- Dày 4px
+MainStroke.Transparency = 0                              -- Không mờ
+MainStroke.LineJoinMode = Enum.LineJoinMode.Round
+
+-- GRADIENT CHO VIỀN CHÍNH (PHẦN "CHẠY CHẠY")
 local StrokeGradient = Instance.new("UIGradient", MainStroke)
 StrokeGradient.Color = ColorSequence.new({
-     ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 150, 255)),     -- Xanh
-    ColorSequenceKeypoint.new(0.1, Color3.fromRGB(0, 150, 255)),   -- Giữ xanh
-    ColorSequenceKeypoint.new(0.2, Color3.fromRGB(255, 255, 255)), -- TRẮNG SÁNG BẮT ĐẦU
-    ColorSequenceKeypoint.new(0.4, Color3.fromRGB(255, 255, 255)), -- TRẮNG SÁNG
-    ColorSequenceKeypoint.new(0.6, Color3.fromRGB(255, 255, 255)), -- TRẮNG SÁNG
-    ColorSequenceKeypoint.new(0.8, Color3.fromRGB(255, 255, 255)), -- TRẮNG SÁNG KẾT THÚC
-    ColorSequenceKeypoint.new(0.9, Color3.fromRGB(0, 150, 255)),   -- Xanh trở lại
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 150, 255)),     -- Xanh
+    ColorSequenceKeypoint.new(0.2, Color3.fromRGB(0, 150, 255)),   -- Giữ xanh
+    ColorSequenceKeypoint.new(0.3, Color3.fromRGB(255, 255, 255)), -- TRẮNG SÁNG BẮT ĐẦU
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)), -- TRẮNG SÁNG GIỮA
+    ColorSequenceKeypoint.new(0.7, Color3.fromRGB(255, 255, 255)), -- TRẮNG SÁNG KẾT THÚC
+    ColorSequenceKeypoint.new(0.8, Color3.fromRGB(0, 150, 255)),   -- Xanh trở lại
     ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 150, 255))      -- Xanh kết thúc
 })
 
--- Điều chỉnh độ trong suốt của gradient
+-- KHÔNG TRONG SUỐT CHO GRADIENT
 StrokeGradient.Transparency = NumberSequence.new({
     NumberSequenceKeypoint.new(0, 0),
-    NumberSequenceKeypoint.new(0.1, 0),
     NumberSequenceKeypoint.new(0.2, 0),
-    NumberSequenceKeypoint.new(0.4, 0),
-    NumberSequenceKeypoint.new(0.6, 0),
+    NumberSequenceKeypoint.new(0.3, 0),
+    NumberSequenceKeypoint.new(0.5, 0),
+    NumberSequenceKeypoint.new(0.7, 0),
     NumberSequenceKeypoint.new(0.8, 0),
-    NumberSequenceKeypoint.new(0.9, 0),
     NumberSequenceKeypoint.new(1, 0)
 })
 
--- Bắt đầu từ góc 0 độ
 StrokeGradient.Rotation = 0
+
+-- ===== LỚP 4: VIỀN TRẮNG MỎNG (TẠO ĐIỂM NHẤN) =====
+local WhiteStroke = Instance.new("UIStroke", MainFrame)
+WhiteStroke.Color = Color3.fromRGB(255, 255, 255)     -- Trắng
+WhiteStroke.Thickness = 2                               -- Mỏng 2px
+WhiteStroke.Transparency = 0.5                           -- Mờ nhẹ
+WhiteStroke.LineJoinMode = Enum.LineJoinMode.Round
 
 -- HEADER (BO GÓC)
 local Header = Instance.new("Frame", MainFrame)
