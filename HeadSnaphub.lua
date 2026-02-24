@@ -54,7 +54,7 @@ MainFrame.Visible = false
 Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0,16)  -- Bo góc MainFrame
 -- ===== VIỀN XANH + GRADIENT TRẮNG CHẠY =====
 local MainStroke = Instance.new("UIStroke", MainFrame)
-MainStroke.Color = Color3.fromRGB(0, 150, 255)
+MainStroke.Color = Color3.fromRGB(0,150,255)
 MainStroke.Thickness = 2.5
 MainStroke.Transparency = 0
 MainStroke.LineJoinMode = Enum.LineJoinMode.Round
