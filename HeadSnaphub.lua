@@ -546,7 +546,7 @@ LoadingGui.Name = "LoadingGui"
 LoadingGui.ResetOnSpawn = false
 LoadingGui.Parent = player:WaitForChild("PlayerGui")
 
--- Bảng nền loading
+-- Bảng nền loading (giữ nguyên kích thước cũ)
 local LoadingFrame = Instance.new("Frame", LoadingGui)
 LoadingFrame.Size = UDim2.new(0, 300, 0, 200)
 LoadingFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
@@ -555,7 +555,7 @@ LoadingFrame.BackgroundTransparency = 0.2
 LoadingFrame.BorderSizePixel = 0
 LoadingFrame.Active = true
 
--- Bo góc và viền cho loading frame
+-- Bo góc và viền
 local LoadingCorner = Instance.new("UICorner", LoadingFrame)
 LoadingCorner.CornerRadius = UDim.new(0, 16)
 
@@ -567,7 +567,7 @@ LoadingStroke.Transparency = 0
 -- Tiêu đề "HEAD SNAP HUB"
 local LoadingTitle = Instance.new("TextLabel", LoadingFrame)
 LoadingTitle.Size = UDim2.new(1, 0, 0, 40)
-LoadingTitle.Position = UDim2.new(0, 0, 0, 20)
+LoadingTitle.Position = UDim2.new(0, 0, 0, 15)
 LoadingTitle.BackgroundTransparency = 1
 LoadingTitle.Text = "HEAD SNAP HUB"
 LoadingTitle.TextColor3 = Color3.fromRGB(0, 150, 255)
@@ -576,23 +576,51 @@ LoadingTitle.TextSize = 24
 
 -- Dòng "loading..." với dấu ... chạy
 local LoadingText = Instance.new("TextLabel", LoadingFrame)
-LoadingText.Size = UDim2.new(1, 0, 0, 30)
-LoadingText.Position = UDim2.new(0, 0, 0, 80)
+LoadingText.Size = UDim2.new(1, 0, 0, 25)
+LoadingText.Position = UDim2.new(0, 0, 0, 60)
 LoadingText.BackgroundTransparency = 1
-LoadingText.Text = "loadingGUI"
+LoadingText.Text = "loading"
 LoadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
 LoadingText.Font = Enum.Font.Gotham
 LoadingText.TextSize = 18
 
+-- THANH TIẾN TRÌNH (BAR) - ĐẶT GIỮA
+local ProgressBarBg = Instance.new("Frame", LoadingFrame)
+ProgressBarBg.Size = UDim2.new(0.8, 0, 0, 12)
+ProgressBarBg.Position = UDim2.new(0.1, 0, 0, 95)
+ProgressBarBg.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+ProgressBarBg.BorderSizePixel = 0
+local ProgressBarBgCorner = Instance.new("UICorner", ProgressBarBg)
+ProgressBarBgCorner.CornerRadius = UDim.new(0, 6)
+
+-- THANH TIẾN TRÌNH (FILL - phần chạy)
+local ProgressBarFill = Instance.new("Frame", ProgressBarBg)
+ProgressBarFill.Size = UDim2.new(0, 0, 1, 0)
+ProgressBarFill.Position = UDim2.new(0, 0, 0, 0)
+ProgressBarFill.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+ProgressBarFill.BorderSizePixel = 0
+local ProgressBarFillCorner = Instance.new("UICorner", ProgressBarFill)
+ProgressBarFillCorner.CornerRadius = UDim.new(0, 6)
+
+-- PHẦN TRĂM HIỂN THỊ (nằm bên phải thanh)
+local PercentText = Instance.new("TextLabel", LoadingFrame)
+PercentText.Size = UDim2.new(1, 0, 0, 20)
+PercentText.Position = UDim2.new(0, 0, 0, 110)
+PercentText.BackgroundTransparency = 1
+PercentText.Text = "0%"
+PercentText.TextColor3 = Color3.fromRGB(200, 200, 200)
+PercentText.Font = Enum.Font.Gotham
+PercentText.TextSize = 14
+
 -- Dòng cảm ơn
 local ThankYouText = Instance.new("TextLabel", LoadingFrame)
-ThankYouText.Size = UDim2.new(1, 0, 0, 30)
-ThankYouText.Position = UDim2.new(0, 0, 0, 120)
+ThankYouText.Size = UDim2.new(1, 0, 0, 25)
+ThankYouText.Position = UDim2.new(0, 0, 0, 140)
 ThankYouText.BackgroundTransparency = 1
 ThankYouText.Text = "thank you for using Head Snap Hub"
-ThankYouText.TextColor3 = Color3.fromRGB(200, 200, 200)
+ThankYouText.TextColor3 = Color3.fromRGB(150, 150, 150)
 ThankYouText.Font = Enum.Font.Gotham
-ThankYouText.TextSize = 14
+ThankYouText.TextSize = 12
 
 -- ===== HIỆU ỨNG CHẠY DẤU ... =====
 task.spawn(function()
@@ -608,23 +636,52 @@ task.spawn(function()
     end
 end)
 
--- ===== TỰ ĐỘNG TẮT SAU 4 GIÂY + FADE IN MENU =====
+-- ===== LOADING VỚI THỜI GIAN NGẪU NHIÊN 3-10 GIÂY =====
 task.spawn(function()
-    task.wait(4)
+    -- Random thời gian từ 3 đến 10 giây (bước 0.5)
+    local randomTime = math.random(6, 20) / 2
+    local steps = 30
+    local waitTime = randomTime / steps
     
-    -- Hiệu ứng mờ dần loading
+    -- Lấy chiều rộng thực tế của thanh
+    local barWidth = ProgressBarBg.AbsoluteSize.X
+    if barWidth == 0 then
+        -- Nếu chưa render, tạm dùng 200
+        barWidth = 200
+    end
+    
+    for i = 0, steps do
+        local percent = (i / steps) * 100
+        local fillWidth = (i / steps) * barWidth
+        
+        ProgressBarFill.Size = UDim2.new(0, fillWidth, 1, 0)
+        PercentText.Text = string.format("%.0f%%", percent)
+        
+        task.wait(waitTime)
+    end
+    
+    -- Đảm bảo 100%
+    ProgressBarFill.Size = UDim2.new(1, 0, 1, 0)
+    PercentText.Text = "100%"
+    task.wait(0.2)
+    
+    -- Hiệu ứng mờ dần
     for i = 0, 1, 0.1 do
         LoadingFrame.BackgroundTransparency = i
         LoadingTitle.TextTransparency = i
-        ThankYouText.TextTransparency = i
         LoadingText.TextTransparency = i
+        ThankYouText.TextTransparency = i
+        PercentText.TextTransparency = i
+        ProgressBarBg.BackgroundTransparency = i
+        ProgressBarFill.BackgroundTransparency = i
         LoadingStroke.Transparency = i
         task.wait(0.03)
     end
     
     LoadingGui:Destroy()
     
-   MainFrame.Visible = true
+    -- HIỆN MENU
+    MainFrame.Visible = true
     Header.Visible = true
     Content.Visible = true
     TabBar.Visible = true
