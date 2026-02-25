@@ -20,6 +20,7 @@ local FOV_ENABLED = true
 local FOV_RADIUS = 300
 local FOV_COLOR = Color3.fromRGB(255,0,0)
 local WALLCHECK_ENABLED = true
+local TEAMCHECK_ENABLED = true
 local aimbot = false
 local ESP_Boxes = {}
 
@@ -45,7 +46,7 @@ FOVCorner.CornerRadius = UDim.new(1, 0)
 
 --================ MAIN UI =================
 local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0,260,0,350)
+MainFrame.Size = UDim2.new(0,260,0,400)
 MainFrame.Position = UDim2.new(0.5,-130,0.5,-165)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20,20,20)
 MainFrame.BorderSizePixel = 0
@@ -158,7 +159,7 @@ local AimBtn = MakeButton("Aimbot : OFF", 10)
 local EspBtn = MakeButton("ESP : ON", 62)
 local FovBtn = MakeButton("FOV : ON", 114)
 local WallCheckBtn = MakeButton("Wall Check : ON", 218)
-
+local TeamCheckBtn = MakeButton("Team Check : ON", 270)  -- Đặt ở y = 270
 --================ FOV +/- BUTTON =================
 local FovPlus = Instance.new("TextButton", MainContainer)
 FovPlus.Size = UDim2.new(0.5,-15,0,36)
@@ -267,19 +268,42 @@ CollapseBtn.MouseButton1Click:Connect(function()
         end
         
         TweenService:Create(MainFrame, TweenInfo.new(0.25), {
-            Size = UDim2.new(0,260,0,350)
+            Size = UDim2.new(0,260,0,400)
         }):Play()
     end
+end)
+--================ TEAM CHECK FUNCTION =================
+local function IsSameTeam(plr)
+    -- Nếu tắt team check, trả về false (coi như không cùng team)
+    if not TEAMCHECK_ENABLED then
+        return false
+    end
+    
+    -- Lấy team của mình và team của mục tiêu
+    local myTeam = player.Team
+    local theirTeam = plr.Team
+    
+    -- Nếu cả hai đều có team và giống nhau → cùng team
+    if myTeam and theirTeam and myTeam == theirTeam then
+        return true
+    end
+    
+    -- Các trường hợp khác: không cùng team
+    return false
+end
+-- TEAM CHECK BUTTON
+TeamCheckBtn.MouseButton1Click:Connect(function()
+    TEAMCHECK_ENABLED = not TEAMCHECK_ENABLED
+    TeamCheckBtn.Text = TEAMCHECK_ENABLED and "Team Check : ON" or "Team Check : OFF"
 end)
 --================ AIMBOT =================
 local function GetClosestTarget()
     local closest, shortest = nil, FOV_RADIUS
     
     for _, plr in ipairs(Players:GetPlayers()) do
-        if plr ~= player and plr.Character then
+        if plr ~= player and not IsSameTeam(plr) and plr.Character then
             local hum = plr.Character:FindFirstChild("Humanoid")
             local head = plr.Character:FindFirstChild("Head")
-            
             if hum and hum.Health > 0 and head then
                 local pos, onscreen = Camera:WorldToViewportPoint(head.Position)
                 
@@ -524,21 +548,12 @@ local FOV_STEP = 25
 
 FovPlus.MouseButton1Click:Connect(function()
     FOV_RADIUS = math.clamp(FOV_RADIUS + FOV_STEP, FOV_MIN, FOV_MAX)
+    FOVValueLabel.Text = "FOV: " .. FOV_RADIUS
 end)
 
 FovMinus.MouseButton1Click:Connect(function()
     FOV_RADIUS = math.clamp(FOV_RADIUS - FOV_STEP, FOV_MIN, FOV_MAX)
-end)
--- ===== HIỆU ỨNG GLOW CHẠY VÔ TẬN =====
--- Cách 1: Chạy mượt bằng TweenService
-task.spawn(function()
-    while true do
-        -- Xoay gradient 360 độ trong 8 giây
-        TweenService:Create(StrokeGradient, TweenInfo.new(8, Enum.EasingStyle.Linear), {
-            Rotation = StrokeGradient.Rotation + 360
-        }):Play()
-        task.wait(8)  -- Đợi 8 giây rồi lặp lại
-    end
+    FOVValueLabel.Text = "FOV: " .. FOV_RADIUS
 end)
 --================ INTRO LOADING =================
 local LoadingGui = Instance.new("ScreenGui")
